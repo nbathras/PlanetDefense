@@ -14,108 +14,160 @@ public class Projectile : MonoBehaviour {
         return projectile;
     }
 
-    /* Timers */
-    [SerializeField] private float despawnTimerMax;
-    private float despawnTimer;
+    private enum ProjectileState { PreExplode, Flash, Explode, Fade };
+
+    /* Float Timers */
+    [Header("Timers")]
     [SerializeField] private float flashTimerMax;
     private float flashTimer;
+    [SerializeField] private float explodeTimerMax;
+    private float explodeTimer;
     [SerializeField] private float fadeTimerMax;
     private float fadeTimer;
 
-    /* Refrences */
-    [SerializeField] private Transform explosionTransform;
-    [SerializeField] private Transform explosionFlashTransform;
+    /* Transform Holders */
+    [Header("Transform Holders")]
+    [SerializeField] private Transform projectileHolder;
+    [SerializeField] private Transform flashHolder;
+    [SerializeField] private Transform explosionHolder;
 
-    /* Parameters */
-    [SerializeField] private float speed;
+    /* Other Parameters */
+    [Header("Other Parameters")]
+    [SerializeField] private float projectileSpeed;
+    [SerializeField] private float maxExplosionSize;
 
-    private SpriteRenderer sr;
+    /* Cache */
+    private SpriteRenderer[] explosionSprites;
 
     private Vector3 targetPostion;
     private Vector3 normalizedDirection;
-    private bool isExploded;
-    private bool isFading;
+
+    private ProjectileState projectileState;
 
     private void Awake() {
-        despawnTimer = despawnTimerMax;
         flashTimer = flashTimerMax;
+        explodeTimer = explodeTimerMax;
         fadeTimer = fadeTimerMax;
 
-        isExploded = false;
-        isFading = false;
 
-        explosionTransform.gameObject.SetActive(false);
-        explosionFlashTransform.gameObject.SetActive(false);
+        projectileHolder.gameObject.SetActive(true);
+        flashHolder.gameObject.SetActive(false);
+        explosionHolder.gameObject.SetActive(false);
 
-        sr = GetComponent<SpriteRenderer>();
+        explosionSprites = explosionHolder.GetComponentsInChildren<SpriteRenderer>();
+
+        projectileState = ProjectileState.PreExplode;
     }
 
     private void Update() {
-        if (!isExploded) {
-            HandleMovement();
-            HandleFuse();
-        } else {
-            if (!isFading) {
-                HandleFlashTimer();
-                HandleExplosion();
-                HandleDespawnTimer();
-            } else {
-                HandleFade();
+        if (projectileState == ProjectileState.PreExplode) {
+            PreExplosionAction();
+            if (PreExplosionCondition()) {
+                PreExplosionStateChange();
             }
+        } else if (projectileState == ProjectileState.Flash) {
+            FlashAction();
+            if (FlashCondition()) {
+                FlashStateChange();
+            }
+        } else if (projectileState == ProjectileState.Explode) {
+            ExplodeAction();
+            if (ExplodeCondition()) {
+                ExplodeStateChange();
+            }
+        } else if (projectileState == ProjectileState.Fade) {
+            FadeAction();
+            if (FadeCondition()) {
+                FadeStateChange();
+            }
+        } else {
+            throw new System.Exception("Error: The current state is not handled by the projectile");
         }
     }
 
-    private void HandleFade() {
+    /* PreExplode State */
+    /*******************/
+    private void PreExplosionAction() {
+        // Moves projectile to taget at constant speed;
+        transform.position += normalizedDirection * Time.deltaTime * projectileSpeed;
+    }
+
+    private bool PreExplosionCondition() {
+        // Return true when close to target
+        return Vector3.Distance(transform.position, targetPostion) < 0.1f;
+    }
+
+    private void PreExplosionStateChange() {
+        // Hide Projectile
+        projectileHolder.gameObject.SetActive(false);
+        // Show Flash
+        flashHolder.gameObject.SetActive(true);
+
+        // Projectile State: PreExplosion => Flash
+        projectileState = ProjectileState.Flash;
+    }
+
+    /* Flash State */
+    /***************/
+    private void FlashAction() {
+        // Reduce Flash Timer;
+        flashTimer -= Time.deltaTime;
+    }
+
+    private bool FlashCondition() {
+        return flashTimer < 0;
+    }
+
+    private void FlashStateChange() {
+        // Hide Flash
+        flashHolder.gameObject.SetActive(false);
+        // Show Explosion
+        explosionHolder.gameObject.SetActive(true);
+
+        // Projectile State: Flash => Explode
+        projectileState = ProjectileState.Explode;
+    }
+
+    /* Explode State */
+    /*****************/
+    private void ExplodeAction() {
+        explodeTimer -= Time.deltaTime;
+
+        float timerPercent = explodeTimer / explodeTimerMax;
+
+        float explosionSize = (1 - timerPercent) * maxExplosionSize;
+        transform.localScale = new Vector3(explosionSize, explosionSize, 0);
+    }
+
+    private bool ExplodeCondition() {
+        return explodeTimer < 0f;
+    }
+
+    private void ExplodeStateChange() {
+        projectileState = ProjectileState.Fade;
+    }
+
+    /* Fade State */
+    /**************/
+    private void FadeAction() {
         fadeTimer -= Time.deltaTime;
 
-        float size = (fadeTimer / fadeTimerMax);
+        float timerPercent = fadeTimer / fadeTimerMax;
 
-        transform.localScale = new Vector3(.75f * size + .25f, .75f * size + .25f, 0);
-        SpriteRenderer[] srList = explosionTransform.GetComponentsInChildren<SpriteRenderer>();
-        for (int i = 0; i < srList.Length; i++) {
-            Color currentColor = srList[i].color;
-            srList[i].color = new Color(currentColor.r, currentColor.g, currentColor.b, size);
-        }
+        float explosionSize = (.75f * timerPercent + .25f) * maxExplosionSize;
+        transform.localScale = new Vector3(explosionSize, explosionSize, 0);
 
-        if (fadeTimer < 0f) {
-            Destroy(gameObject);
+        for (int i = 0; i < explosionSprites.Length; i++) {
+            Color c = explosionSprites[i].color;
+            explosionSprites[i].color = new Color(c.r, c.g, c.b, timerPercent);
         }
     }
 
-    private void HandleMovement() {
-        transform.position += normalizedDirection * Time.deltaTime * speed;
+    private bool FadeCondition() {
+        return fadeTimer < 0f;
     }
 
-    private void HandleFuse() {
-        if (Vector3.Distance(transform.position, targetPostion) < 0.1f) {
-            // Debug.Log("Projectile " + name + " exploded");
-            isExploded = true;
-            sr.color = new Color(0, 0, 0, 0);
-            explosionTransform.gameObject.SetActive(true);
-        }
-    }
-
-    private void HandleFlashTimer() {
-        flashTimer -= Time.deltaTime;
-        if (flashTimer >= 0) {
-            explosionFlashTransform.gameObject.SetActive(true);
-        } else {
-            explosionFlashTransform.gameObject.SetActive(false);
-        }
-    }
-
-    private void HandleExplosion() {
-        float size = (1 - despawnTimer / despawnTimerMax);
-
-        transform.localScale = new Vector3(size, size, 0);
-    }
-
-    private void HandleDespawnTimer() {
-        despawnTimer -= Time.deltaTime;
-        if (despawnTimer < 0f) {
-            // Debug.Log("Projectile " + name + " was destoryed");
-            // Destroy(gameObject);
-            isFading = true;
-        }
+    private void FadeStateChange() {
+        Destroy(gameObject);
     }
 }
