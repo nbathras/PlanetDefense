@@ -489,6 +489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   despawnTimerMax: 1
   flashTimerMax: 0.05
+  fadeTimerMax: 0.25
   explosionTransform: {fileID: 2814075225042700439}
   explosionFlashTransform: {fileID: 1086007555579998777}
   speed: 6

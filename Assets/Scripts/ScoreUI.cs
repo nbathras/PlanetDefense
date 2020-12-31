@@ -5,15 +5,13 @@ public class ScoreUI : MonoBehaviour {
 
     [SerializeField] private TextMeshProUGUI scoreText;
 
-    private void Awake() {
-        GameManager.Instance.OnScoreChanged += ScoreUI_OnScoreChanged;
-    }
-
     private void Start() {
+        GameManager.Instance.OnScoreChangedEvent += ScoreUI_OnScoreChangedEvent;
+
         UpdateScoreText();
     }
 
-    private void ScoreUI_OnScoreChanged(object sender, System.EventArgs e) {
+    private void ScoreUI_OnScoreChangedEvent(object sender, System.EventArgs e) {
         UpdateScoreText();
     }
 

@@ -52,6 +52,8 @@ public class Asteroid : MonoBehaviour {
             Destroy(gameObject);
         } else if (other.CompareTag("City")) {
             // Debug.Log("City " + other.gameObject.name + " hit by asteroid " + name);
+            GameManager.Instance.RemoveCity(1);
+            Destroy(other.gameObject);
             Destroy(gameObject);
         }
     }

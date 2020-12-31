@@ -19,6 +19,8 @@ public class Projectile : MonoBehaviour {
     private float despawnTimer;
     [SerializeField] private float flashTimerMax;
     private float flashTimer;
+    [SerializeField] private float fadeTimerMax;
+    private float fadeTimer;
 
     /* Refrences */
     [SerializeField] private Transform explosionTransform;
@@ -27,17 +29,25 @@ public class Projectile : MonoBehaviour {
     /* Parameters */
     [SerializeField] private float speed;
 
+    private SpriteRenderer sr;
+
     private Vector3 targetPostion;
     private Vector3 normalizedDirection;
     private bool isExploded;
+    private bool isFading;
 
     private void Awake() {
         despawnTimer = despawnTimerMax;
         flashTimer = flashTimerMax;
+        fadeTimer = fadeTimerMax;
+
         isExploded = false;
+        isFading = false;
 
         explosionTransform.gameObject.SetActive(false);
         explosionFlashTransform.gameObject.SetActive(false);
+
+        sr = GetComponent<SpriteRenderer>();
     }
 
     private void Update() {
@@ -45,9 +55,30 @@ public class Projectile : MonoBehaviour {
             HandleMovement();
             HandleFuse();
         } else {
-            HandleFlashTimer();
-            HandleExplosion();
-            HandleDespawnTimer();
+            if (!isFading) {
+                HandleFlashTimer();
+                HandleExplosion();
+                HandleDespawnTimer();
+            } else {
+                HandleFade();
+            }
+        }
+    }
+
+    private void HandleFade() {
+        fadeTimer -= Time.deltaTime;
+
+        float size = (fadeTimer / fadeTimerMax);
+
+        transform.localScale = new Vector3(.75f * size + .25f, .75f * size + .25f, 0);
+        SpriteRenderer[] srList = explosionTransform.GetComponentsInChildren<SpriteRenderer>();
+        for (int i = 0; i < srList.Length; i++) {
+            Color currentColor = srList[i].color;
+            srList[i].color = new Color(currentColor.r, currentColor.g, currentColor.b, size);
+        }
+
+        if (fadeTimer < 0f) {
+            Destroy(gameObject);
         }
     }
 
@@ -59,6 +90,7 @@ public class Projectile : MonoBehaviour {
         if (Vector3.Distance(transform.position, targetPostion) < 0.1f) {
             // Debug.Log("Projectile " + name + " exploded");
             isExploded = true;
+            sr.color = new Color(0, 0, 0, 0);
             explosionTransform.gameObject.SetActive(true);
         }
     }
@@ -82,7 +114,8 @@ public class Projectile : MonoBehaviour {
         despawnTimer -= Time.deltaTime;
         if (despawnTimer < 0f) {
             // Debug.Log("Projectile " + name + " was destoryed");
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            isFading = true;
         }
     }
 }
