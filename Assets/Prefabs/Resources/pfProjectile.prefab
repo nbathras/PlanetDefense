@@ -555,7 +555,7 @@ MonoBehaviour:
   projectileHolder: {fileID: 3308341327419042726}
   flashHolder: {fileID: 1086007555579998777}
   explosionHolder: {fileID: 2814075225042700439}
-  projectileSpeed: 6
+  projectileSpeed: 9
   maxExplosionSize: 8
 --- !u!58 &3752920167544965988
 CircleCollider2D:
