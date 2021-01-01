@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CannonController : MonoBehaviour {
@@ -9,23 +10,23 @@ public class CannonController : MonoBehaviour {
 
     [SerializeField] private Transform projectileSpawnPosition;
 
-    [SerializeField] private int ammoMax;
-    private int ammo;
+    [SerializeField] private int ammoCount;
 
     private Camera mainCamera;
+
+    private List<Projectile> firedProjectileList;
 
     private void Awake() {
         if (Instance == null) {
             Instance = this;
         }
+
+        firedProjectileList = new List<Projectile>();
     }
 
     private void Start() {
         // Cached main camera
         mainCamera = Camera.main;
-
-        ammo = ammoMax;
-        OnAmmoAmountChangedEvent?.Invoke(this, EventArgs.Empty);
     }
     
     private void Update() {
@@ -38,20 +39,44 @@ public class CannonController : MonoBehaviour {
             transform.eulerAngles = new Vector3(0, 0, angle - 90);
 
             // Fire Cannonball
-            if (Input.GetKeyDown(KeyCode.Mouse0)) {
-                ReduceAmmountCount(1);
-                Projectile.Create(projectileSpawnPosition.position, mousePosition);
+            if (Input.GetKeyDown(KeyCode.Mouse0) && ammoCount > 0) {
+                SetAmountCount(ammoCount - 1);
+                firedProjectileList.Add(Projectile.Create(projectileSpawnPosition.position, mousePosition));
             }
         }
     }
 
-    private void ReduceAmmountCount(int a) {
-        ammo -= a;
+    public void Pause(bool isPaused) {
+        Instance.enabled = !isPaused;
+        for (int i = 0; i < firedProjectileList.Count; i++) {
+            if (firedProjectileList[i]) {
+                firedProjectileList[i].enabled = !isPaused;
+            } else {
+                Debug.LogWarning("Warning: Null reference in firedProjectileList");
+            }
+        }
+    }
+
+    public void SetAmountCount(int ammoCount) {
+        this.ammoCount = ammoCount;
 
         OnAmmoAmountChangedEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    public int GetAmmo() {
-        return ammo;
+    public int GetAmmoCount() {
+        return ammoCount;
+    }
+
+    public bool DestroyProjectile(Projectile projectile) {
+        if (projectile == null) {
+            throw new Exception("Error: Attempted to destory an asteroid with a null references");
+        }
+        if (!firedProjectileList.Remove(projectile)) {
+            throw new Exception("Error: Attempted to destory an asteroid not in asteroid list");
+        }
+
+        Destroy(projectile.gameObject);
+
+        return true;
     }
 } 
