@@ -15,10 +15,12 @@ public class CityController : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
+        Pause(true);
     }
 
     public void Setup() {
         Cleanup();
+        Pause(false);
 
         cityList = new List<City>();
         for (int i = 0; i < cityHolderList.Count; i++) {
@@ -26,19 +28,27 @@ public class CityController : MonoBehaviour {
         }
     }
 
-    private void Cleanup() {
+    public void Cleanup() {
         if (cityList != null) {
             for (int i = 0; i < cityList.Count; i++) {
-                Destroy(cityList[i].gameObject);
+                if (cityList[i] != null) {
+                    Destroy(cityList[i].gameObject);
+                }
             }
 
             cityList = null;
         }
+        Pause(true);
     }
 
     public void Pause(bool isPaused) {
-        for (int i = 0; i < cityList.Count; i++) {
-            cityList[i].Pause(isPaused);
+        enabled = !isPaused;
+        if (cityList != null) {
+            for (int i = 0; i < cityList.Count; i++) {
+                if (cityList[i] != null) {
+                    cityList[i].Pause(isPaused);
+                }
+            }
         }
     }
 

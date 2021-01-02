@@ -21,8 +21,7 @@ public class CannonController : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
-
-        Setup();
+        Pause(true);
     }
 
     private void Start() {
@@ -49,13 +48,14 @@ public class CannonController : MonoBehaviour {
 
     public void Setup() {
         Cleanup();
+        Pause(false);
 
-        ammoCount = ammoCountStart;
+        SetAmountCount(ammoCountStart);
 
         firedProjectileList = new List<Projectile>();
     }
 
-    private void Cleanup() {
+    public void Cleanup() {
         if (firedProjectileList != null) {
             for (int i = 0; i < firedProjectileList.Count; i++) {
                 Destroy(firedProjectileList[i].gameObject);
@@ -63,15 +63,16 @@ public class CannonController : MonoBehaviour {
 
             firedProjectileList = null;
         }
+        Pause(true);
     }
 
     public void Pause(bool isPaused) {
         Instance.enabled = !isPaused;
-        for (int i = 0; i < firedProjectileList.Count; i++) {
-            if (firedProjectileList[i]) {
-                firedProjectileList[i].enabled = !isPaused;
-            } else {
-                Debug.LogWarning("Warning: Null reference in firedProjectileList");
+        if (firedProjectileList != null) {
+            for (int i = 0; i < firedProjectileList.Count; i++) {
+                if (firedProjectileList[i]) {
+                    firedProjectileList[i].enabled = !isPaused;
+                }
             }
         }
     }

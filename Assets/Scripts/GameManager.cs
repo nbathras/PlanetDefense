@@ -5,9 +5,16 @@ public class GameManager : MonoBehaviour {
 
     public static GameManager Instance;
 
+    /* Game Lifecycle
+     * 1. Pre event (All starts and awake run)
+     * 2. OnGameSetupEvent (Game is setup and started)
+     * 3. OnGameOver (Game Over screen comes up and wait for setup or quit)
+     * 4. OnGameQuit (Call cleanup and same state as pre event)
+     */
     public event EventHandler OnGameSetupEvent;
     public event EventHandler OnScoreChangedEvent;
     public event EventHandler OnGameOverEvent;
+    public event EventHandler OnGameQuitEvent;
 
     private int score;
 
@@ -20,8 +27,6 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Start() {
-        SetUpGame();
-
         CityController.Instance.OnDestoryCityEvent += GameManager_OnDestoryCityEvent;
     }
 
@@ -35,6 +40,16 @@ public class GameManager : MonoBehaviour {
         Pause(false);
 
         OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void QuitGame() {
+        Pause(true);
+
+        CityController.Instance.Cleanup();
+        AsteroidSpawnerController.Instance.Cleanup();
+        CannonController.Instance.Cleanup();
+
+        OnGameQuitEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public void AddScore(int s) {

@@ -63,8 +63,12 @@ public class City : MonoBehaviour {
 
     public void Pause(bool isPaused) {
         enabled = !isPaused;
-        for (int i = 0; i < reloadList.Count; i++) {
-            reloadList[i].enabled = !isPaused;
+        if (reloadList != null) {
+            for (int i = 0; i < reloadList.Count; i++) {
+                if (reloadList[i] != null) {
+                    reloadList[i].enabled = !isPaused;
+                }
+            }
         }
     }
 

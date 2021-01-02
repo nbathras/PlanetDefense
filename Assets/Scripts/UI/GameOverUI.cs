@@ -1,28 +1,36 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour {
-    [SerializeField] private TextMeshProUGUI scoreText;
 
+    [Header("Transform Holder")]
     [SerializeField] private Transform gameOverUIHolder;
 
+    [Header("Buttons")]
     [SerializeField] private Button restartButton;
+
+    [Header("Dynamic Text")]
+    [SerializeField] private TextMeshProUGUI scoreText;
 
     private void Awake() {
         gameOverUIHolder.gameObject.SetActive(false);
-    }
-
-    private void Start() {
-        GameManager.Instance.OnGameOverEvent += GameOverUI_OnGameOverEvent;
-        GameManager.Instance.OnGameSetupEvent += GameOverUI_OnGameSetupEvent;
 
         restartButton.onClick.AddListener(delegate { GameManager.Instance.SetUpGame(); });
     }
 
-    private void GameOverUI_OnGameOverEvent(object sender, System.EventArgs e) {
-        Debug.Log("test1");
+    private void Start() {
+        GameManager.Instance.OnGameSetupEvent += GameOverUI_OnGameSetupEvent;
+        GameManager.Instance.OnGameOverEvent += GameOverUI_OnGameOverEvent;
+        GameManager.Instance.OnGameQuitEvent += GameOverUI_OnGameQuitEvent;
+    }
 
+    private void GameOverUI_OnGameQuitEvent(object sender, EventArgs e) {
+        gameOverUIHolder.gameObject.SetActive(false);
+    }
+
+    private void GameOverUI_OnGameOverEvent(object sender, System.EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(true);
 
         scoreText.SetText("Score: " + GameManager.Instance.GetScore().ToString());

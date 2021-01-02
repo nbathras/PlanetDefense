@@ -20,8 +20,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
         if (Instance == null) { Instance = this; }
 
         mainCamera = Camera.main;
-
-        Setup();
+        Pause(true);
     }
 
     private void Update() {
@@ -41,6 +40,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
     
     public void Setup() {
         Cleanup();
+        Pause(false);
 
         spawnTimerReducedMax = spawnTimerStartingMax;
         spawnTimer = spawnTimerReducedMax;
@@ -49,7 +49,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
         asteroidList = new List<Asteroid>();
     }
 
-    private void Cleanup() {
+    public void Cleanup() {
         if (asteroidList != null) {
             for (int i = 0; i < asteroidList.Count; i++) {
                 if (asteroidList[i] != null) {
@@ -59,6 +59,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
             asteroidList = null;
         }
+        Pause(true);
     }
 
     private void SpawnAsteroid() {
@@ -82,11 +83,11 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
     public void Pause(bool isPaused) {
         Instance.enabled = !isPaused;
-        for (int i = 0; i < asteroidList.Count; i++) {
-            if (asteroidList[i]) {
-                asteroidList[i].enabled = !isPaused;
-            } else {
-                Debug.LogWarning("Warning: Null reference in asteroidList");
+        if (asteroidList != null) {
+            for (int i = 0; i < asteroidList.Count; i++) {
+                if (asteroidList[i]) {
+                    asteroidList[i].enabled = !isPaused;
+                }
             }
         }
     }
