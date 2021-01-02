@@ -10,7 +10,8 @@ public class CannonController : MonoBehaviour {
 
     [SerializeField] private Transform projectileSpawnPosition;
 
-    [SerializeField] private int ammoCount;
+    [SerializeField] private int ammoCountStart;
+    private int ammoCount;
 
     private Camera mainCamera;
 
@@ -21,7 +22,7 @@ public class CannonController : MonoBehaviour {
             Instance = this;
         }
 
-        firedProjectileList = new List<Projectile>();
+        Setup();
     }
 
     private void Start() {
@@ -43,6 +44,24 @@ public class CannonController : MonoBehaviour {
                 SetAmountCount(ammoCount - 1);
                 firedProjectileList.Add(Projectile.Create(projectileSpawnPosition.position, mousePosition));
             }
+        }
+    }
+
+    public void Setup() {
+        Cleanup();
+
+        ammoCount = ammoCountStart;
+
+        firedProjectileList = new List<Projectile>();
+    }
+
+    private void Cleanup() {
+        if (firedProjectileList != null) {
+            for (int i = 0; i < firedProjectileList.Count; i++) {
+                Destroy(firedProjectileList[i].gameObject);
+            }
+
+            firedProjectileList = null;
         }
     }
 

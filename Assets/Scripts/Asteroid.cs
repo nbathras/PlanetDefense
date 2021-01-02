@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 
 public class Asteroid : MonoBehaviour {
-    public static Asteroid Create(Vector3 spawnPosition, Vector3 direction) {
+    public static Asteroid Create(Vector3 spawnPosition, Vector3 direction, string name) {
         Transform pfAsteroid = Resources.Load<Transform>("pfAsteroid");
         Transform asteroidTransform = Instantiate(pfAsteroid, spawnPosition, Quaternion.identity);
 
         Asteroid asteroid = asteroidTransform.GetComponent<Asteroid>();
         Vector3 normalizedDirection = direction.normalized;
 
+        asteroid.name = name;
         asteroid.normalizedDirection = new Vector3(normalizedDirection.x, normalizedDirection.y, 0f);
         asteroid.spawnPosition = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
 
@@ -49,8 +50,7 @@ public class Asteroid : MonoBehaviour {
         } else if (other.CompareTag("Ground")) {
             Destroy();
         } else if (other.CompareTag("City")) {
-            GameManager.Instance.RemoveCity(1);
-            Destroy(other.gameObject);
+            CityController.Instance.DestoryCity(other.gameObject.GetComponent<City>());
             Destroy();
         }
     }

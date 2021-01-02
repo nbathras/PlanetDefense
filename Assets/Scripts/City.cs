@@ -1,13 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class City : MonoBehaviour {
 
-    public static City Create(Transform cityHolder) {
+    public static City Create(Transform cityHolder, String name) {
         Transform pfCity = Resources.Load<Transform>("pfCity");
         Transform cityTransform = Instantiate(pfCity, cityHolder.transform.position, Quaternion.identity);
         cityTransform.SetParent(cityHolder);
 
         City city = cityTransform.GetComponent<City>();
+        city.name = name;
 
         return city;
     }
@@ -17,8 +20,13 @@ public class City : MonoBehaviour {
     [SerializeField] private float reloadTimerMax;
     private float reloadTimer;
 
+    private List<Reload> reloadList;
+
     private Vector3[] positionList;
-    private int index = 0;
+
+    private void Awake() {
+        reloadList = new List<Reload>();
+    }
 
     private void Start() {
         reloadTimer = reloadTimerMax;
@@ -49,7 +57,27 @@ public class City : MonoBehaviour {
         reloadTimer -= Time.deltaTime;
         if (reloadTimer < 0f) {
             reloadTimer = reloadTimerMax;
-            Reload.Create(transform, positionList);
+            reloadList.Add(Reload.Create(this, positionList));
         }
+    }
+
+    public void Pause(bool isPaused) {
+        enabled = !isPaused;
+        for (int i = 0; i < reloadList.Count; i++) {
+            reloadList[i].enabled = !isPaused;
+        }
+    }
+
+    public bool DestoryReload(Reload reload) {
+        if (reload == null) {
+            throw new Exception("Error: Attempted to destory an reload with a null references");
+        }
+        if (!reloadList.Remove(reload)) {
+            throw new Exception("Error: Attempted to destory an reload not in asteroid list");
+        }
+
+        Destroy(reload.gameObject);
+
+        return true;
     }
 }

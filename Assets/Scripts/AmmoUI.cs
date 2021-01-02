@@ -15,8 +15,7 @@ public class AmmoUI : MonoBehaviour {
 
     private void Start() {
         CannonController.Instance.OnAmmoAmountChangedEvent += AmmoUI_OnAmmoAmountChangedEvent;
-
-        ammoText.SetText(CannonController.Instance.GetAmmoCount().ToString());
+        GameManager.Instance.OnGameSetupEvent += AmmoUI_OnGameSetupEvent;
     }
 
     private void Update() {
@@ -25,6 +24,12 @@ public class AmmoUI : MonoBehaviour {
     }
 
     private void AmmoUI_OnAmmoAmountChangedEvent(object sender, System.EventArgs e) {
+        ammoText.SetText(CannonController.Instance.GetAmmoCount().ToString());
+    }
+
+    private void AmmoUI_OnGameSetupEvent(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
+
         ammoText.SetText(CannonController.Instance.GetAmmoCount().ToString());
     }
 }

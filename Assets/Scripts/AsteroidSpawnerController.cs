@@ -7,7 +7,8 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
     private Camera mainCamera;
 
-    [SerializeField] private float spawnTimerMax;
+    [SerializeField] private float spawnTimerStartingMax;
+    private float spawnTimerReducedMax;
     private float spawnTimer;
 
     [SerializeField] private float levelIncreaseTimerMax;
@@ -20,29 +21,42 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
         mainCamera = Camera.main;
 
-        spawnTimer = spawnTimerMax;
-        levelIncreaseTimer = levelIncreaseTimerMax;
-
-        asteroidList = new List<Asteroid>();
+        Setup();
     }
 
     private void Update() {
         spawnTimer -= Time.deltaTime;
         if (spawnTimer < 0f) {
             SpawnAsteroid();
-            spawnTimer = spawnTimerMax;
+            spawnTimer = spawnTimerReducedMax;
         }
 
         levelIncreaseTimer -= Time.deltaTime;
         if (levelIncreaseTimer < 0f) {
             Debug.Log("Speed increase");
             levelIncreaseTimer = levelIncreaseTimerMax;
-            spawnTimerMax /= 1.5f;
+            spawnTimerReducedMax /= 1.5f;
         }
     }
+    
+    public void Setup() {
+        Cleanup();
 
-    private void Setup() {
+        spawnTimerReducedMax = spawnTimerStartingMax;
+        spawnTimer = spawnTimerReducedMax;
+        levelIncreaseTimer = levelIncreaseTimerMax;
+
         asteroidList = new List<Asteroid>();
+    }
+
+    private void Cleanup() {
+        if (asteroidList != null) {
+            for (int i = 0; i < asteroidList.Count; i++) {
+                Destroy(asteroidList[i].gameObject);
+            }
+
+            asteroidList = null;
+        }
     }
 
     private void SpawnAsteroid() {
@@ -61,7 +75,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
         Vector2 spawnPosition = new Vector2(Random.Range(upperLeft.x, upperRight.x), upperRight.y + .075f);
         Vector2 direction = (new Vector2(Random.Range(lowerLeft.x, lowerRight.x), lowerRight.y) - spawnPosition).normalized;
 
-        asteroidList.Add(Asteroid.Create(spawnPosition, direction));
+        asteroidList.Add(Asteroid.Create(spawnPosition, direction, "Asteroid " + asteroidList.ToString()));
     }
 
     public void Pause(bool isPaused) {

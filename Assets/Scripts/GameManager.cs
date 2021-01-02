@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour {
     public event EventHandler OnGameOverEvent;
 
     private int score;
-    private int cities;
 
     private bool isPaused;
 
@@ -18,21 +17,22 @@ public class GameManager : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
-
-        score = 0;
-
-        Pause(false);
     }
 
     private void Start() {
         SetUpGame();
+
+        CityController.Instance.OnDestoryCityEvent += GameManager_OnDestoryCityEvent;
     }
 
     public void SetUpGame() {
         score = 0;
-        cities = 6;
 
-        CityController.Instance.SetupCities();
+        CityController.Instance.Setup();
+        AsteroidSpawnerController.Instance.Setup();
+        CannonController.Instance.Setup();
+
+        Pause(false);
 
         OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
     }
@@ -43,10 +43,8 @@ public class GameManager : MonoBehaviour {
         OnScoreChangedEvent?.Invoke(this, EventArgs.Empty);
     }
 
-    public void RemoveCity(int c) {
-        cities -= c;
-
-        if (cities <= 0) {
+    private void GameManager_OnDestoryCityEvent(object sender, System.EventArgs e) {
+        if (CityController.Instance.GetNumberAliveCities() <= 0) {
             Pause(true);
             OnGameOverEvent?.Invoke(this, EventArgs.Empty);
         }
@@ -62,8 +60,8 @@ public class GameManager : MonoBehaviour {
 
     public void Pause(bool isPaused) {
         this.isPaused = isPaused;
-        Debug.Log(isPaused);
         AsteroidSpawnerController.Instance.Pause(isPaused);
         CannonController.Instance.Pause(isPaused);
+        CityController.Instance.Pause(isPaused);
     }
 }
