@@ -21,12 +21,14 @@ public class GameOverUI : MonoBehaviour {
     }
 
     private void GameOverUI_OnGameOverEvent(object sender, System.EventArgs e) {
+        Debug.Log("test1");
+
         gameOverUIHolder.gameObject.SetActive(true);
 
         scoreText.SetText("Score: " + GameManager.Instance.GetScore().ToString());
     }
 
     private void GameOverUI_OnGameSetupEvent(object sender, System.EventArgs e) {
-        gameObject.SetActive(false);
+        gameOverUIHolder.gameObject.SetActive(false);
     }
 }

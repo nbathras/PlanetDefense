@@ -52,7 +52,9 @@ public class AsteroidSpawnerController : MonoBehaviour {
     private void Cleanup() {
         if (asteroidList != null) {
             for (int i = 0; i < asteroidList.Count; i++) {
-                Destroy(asteroidList[i].gameObject);
+                if (asteroidList[i] != null) {
+                    Destroy(asteroidList[i].gameObject);
+                }
             }
 
             asteroidList = null;

@@ -23,7 +23,7 @@ public class PauseMenuUI : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {
+        if (Input.GetKeyDown(KeyCode.P)) {
             bool isPaused = !GameManager.Instance.IsPaused();
             pauseMenuUIHolder.gameObject.SetActive(isPaused);
             GameManager.Instance.Pause(isPaused);

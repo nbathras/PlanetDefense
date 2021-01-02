@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnTimerStartingMax: 3
-  levelIncreaseTimerMax: 10
+  levelIncreaseTimerMax: 1
 --- !u!4 &600345979
 Transform:
   m_ObjectHideFlags: 0
