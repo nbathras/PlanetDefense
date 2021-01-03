@@ -9,15 +9,23 @@ public class GameOverUI : MonoBehaviour {
     [SerializeField] private Transform gameOverUIHolder;
 
     [Header("Buttons")]
-    [SerializeField] private Button restartButton;
+    [SerializeField] private Button saveButton;
 
     [Header("Dynamic Text")]
     [SerializeField] private TextMeshProUGUI scoreText;
 
+    [Header("Input Fields")]
+    [SerializeField] private TMP_InputField playerInitialInputField;
+
+    [Header("Score Text Fields")]
+    [SerializeField] private TextMeshProUGUI rankedListText;
+    [SerializeField] private TextMeshProUGUI scoreListText;
+    [SerializeField] private TextMeshProUGUI nameListText;
+
     private void Awake() {
         gameOverUIHolder.gameObject.SetActive(false);
 
-        restartButton.onClick.AddListener(delegate { GameManager.Instance.SetUpGame(); });
+        saveButton.onClick.AddListener(delegate { SaveAndQuit(); });
     }
 
     private void Start() {
@@ -33,10 +41,26 @@ public class GameOverUI : MonoBehaviour {
     private void GameOverUI_OnGameOverEvent(object sender, System.EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(true);
 
-        scoreText.SetText("Score: " + GameManager.Instance.GetScore().ToString());
+        int playerScore = GameManager.Instance.GetScore();
+
+        scoreText.SetText("Score: " + playerScore.ToString());
+
+        PlayFabController.Instance.UpdateScoreTextFieldsNewScore(playerScore, rankedListText, scoreListText, nameListText);
     }
 
     private void GameOverUI_OnGameSetupEvent(object sender, System.EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(false);
+    }
+
+    private void SaveAndQuit() {
+        int playerScore = GameManager.Instance.GetScore();
+        string playerInitial = playerInitialInputField.text;
+        if (playerInitial.Length > 3) {
+            playerInitial = playerInitial.Substring(0, 3);
+        }
+
+        PlayFabController.Instance.SaveHighScore(playerScore, playerInitial);
+
+        GameManager.Instance.QuitGame();
     }
 }

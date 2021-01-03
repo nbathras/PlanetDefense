@@ -48,6 +48,8 @@ public class MainMenuUI : MonoBehaviour {
     private void DisplayScores() {
         page1Holder.gameObject.SetActive(false);
         page2Holder.gameObject.SetActive(true);
+
+        PlayFabController.Instance.UpdateScoreTextFields(rankedListText, scoreListText, nameListText);
     }
 
     private void DisplayManMenu() {

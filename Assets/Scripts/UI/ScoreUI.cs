@@ -47,7 +47,7 @@ public class ScoreUI : MonoBehaviour {
     }
 
     private void ScoreUI_OnGameSetupEvent(object sender, System.EventArgs e) {
-        gameObject.SetActive(true);
+        scoreUIHolder.gameObject.SetActive(true);
 
         UpdateScoreText();
     }
