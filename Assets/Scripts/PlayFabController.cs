@@ -67,18 +67,12 @@ public class PlayFabController : MonoBehaviour {
                 highScoresList = ConvertHighScoresStringToList(highScoresString);
             }
 
-            Debug.Log("Current High Scores: " + ListToString("", highScoresList));
-
             highScoresList.Add(newScore);
             highScoresList.Sort();
-
-            Debug.Log("New High Scores 1: " + ListToString("", highScoresList));
 
             if (highScoresList.Count > 10) {
                 highScoresList.RemoveRange(10, highScoresList.Count - 10);
             }
-
-            Debug.Log("New High Scores 2: " + ListToString("", highScoresList));
 
             string value = ConvertHighScoresListToString(highScoresList);
 
@@ -113,8 +107,6 @@ public class PlayFabController : MonoBehaviour {
                 highScoresList = ConvertHighScoresStringToList(highScoresString);
             }
 
-            Debug.Log("Current High Scores: " + ListToString("", highScoresList));
-
             rankedListText.SetText("");
             scoreListText.SetText("");
             nameListText.SetText("");
@@ -143,8 +135,6 @@ public class PlayFabController : MonoBehaviour {
 
             Score newScore = new Score(newScoreInt, "???", true);
             highScoresList.Add(newScore);
-
-            Debug.Log("Current High Scores: " + ListToString("", highScoresList));
 
             rankedListText.SetText("");
             scoreListText.SetText("");

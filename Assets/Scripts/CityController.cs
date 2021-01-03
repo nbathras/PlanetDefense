@@ -60,6 +60,10 @@ public class CityController : MonoBehaviour {
         return cityList;
     }
 
+    public int GetScore() {
+        return cityList.Count * 100;
+    }
+
     public bool DestoryCity(City city) {
         if (city == null) {
             throw new Exception("Error: Attempted to destory an city with a null references");

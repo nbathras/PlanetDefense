@@ -87,6 +87,10 @@ public class CannonController : MonoBehaviour {
         return ammoCount;
     }
 
+    public int GetScore() {
+        return GetAmmoCount();
+    }
+
     public bool DestroyProjectile(Projectile projectile) {
         if (projectile == null) {
             throw new Exception("Error: Attempted to destory an asteroid with a null references");

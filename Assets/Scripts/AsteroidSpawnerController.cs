@@ -7,12 +7,8 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
     private Camera mainCamera;
 
-    [SerializeField] private float spawnTimerStartingMax;
-    private float spawnTimerReducedMax;
+    [SerializeField] private float spawnTimerMax;
     private float spawnTimer;
-
-    [SerializeField] private float levelIncreaseTimerMax;
-    private float levelIncreaseTimer;
 
     private List<Asteroid> asteroidList;
 
@@ -27,14 +23,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
         spawnTimer -= Time.deltaTime;
         if (spawnTimer < 0f) {
             SpawnAsteroid();
-            spawnTimer = spawnTimerReducedMax;
-        }
-
-        levelIncreaseTimer -= Time.deltaTime;
-        if (levelIncreaseTimer < 0f) {
-            Debug.Log("Speed increase");
-            levelIncreaseTimer = levelIncreaseTimerMax;
-            spawnTimerReducedMax /= 1.5f;
+            spawnTimer = spawnTimerMax / (1 + GameManager.Instance.GetLevel());
         }
     }
     
@@ -42,9 +31,7 @@ public class AsteroidSpawnerController : MonoBehaviour {
         Cleanup();
         Pause(false);
 
-        spawnTimerReducedMax = spawnTimerStartingMax;
-        spawnTimer = spawnTimerReducedMax;
-        levelIncreaseTimer = levelIncreaseTimerMax;
+        spawnTimer = spawnTimerMax / (1 + GameManager.Instance.GetLevel());
 
         asteroidList = new List<Asteroid>();
     }

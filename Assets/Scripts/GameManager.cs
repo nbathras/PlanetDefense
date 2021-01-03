@@ -13,10 +13,16 @@ public class GameManager : MonoBehaviour {
      */
     public event EventHandler OnGameSetupEvent;
     public event EventHandler OnScoreChangedEvent;
+    public event EventHandler OnLevelChangedEvent;
     public event EventHandler OnGameOverEvent;
     public event EventHandler OnGameQuitEvent;
 
     private int score;
+
+    [SerializeField] private float levelIncreaseTimerMax;
+    private float levelIncreaseTimer;
+
+    private int level;
 
     private bool isPaused;
 
@@ -28,10 +34,32 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         CityController.Instance.OnDestoryCityEvent += GameManager_OnDestoryCityEvent;
+        Pause(true);
+    }
+
+    private void Update() {
+        if (!IsPaused()) {
+            levelIncreaseTimer -= Time.deltaTime;
+            if (levelIncreaseTimer < 0f) {
+
+                level += 1;
+                levelIncreaseTimer = levelIncreaseTimerMax;
+
+                AddScore(CityController.Instance.GetScore() + CannonController.Instance.GetScore() + level * 100);
+
+                CityController.Instance.Setup();
+                AsteroidSpawnerController.Instance.Setup();
+                CannonController.Instance.Setup();
+
+                OnLevelChangedEvent?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     public void SetUpGame() {
         score = 0;
+        level = 0;
+        levelIncreaseTimer = levelIncreaseTimerMax;
 
         CityController.Instance.Setup();
         AsteroidSpawnerController.Instance.Setup();
@@ -56,6 +84,14 @@ public class GameManager : MonoBehaviour {
         score += s;
 
         OnScoreChangedEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public int GetLevel() {
+        return level;
+    }
+
+    public float GetLeveLTimer() {
+        return levelIncreaseTimer;
     }
 
     private void GameManager_OnDestoryCityEvent(object sender, System.EventArgs e) {

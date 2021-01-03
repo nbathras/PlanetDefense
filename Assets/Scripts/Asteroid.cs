@@ -45,7 +45,7 @@ public class Asteroid : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Projectile")) {
-            GameManager.Instance.AddScore(1);
+            GameManager.Instance.AddScore(10);
             Destroy();
         } else if (other.CompareTag("Ground")) {
             Destroy();
