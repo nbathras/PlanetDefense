@@ -31,29 +31,29 @@ public class GameOverUI : MonoBehaviour {
     private void Start() {
         GameManager.Instance.OnGameSetupEvent += GameOverUI_OnGameSetupEvent;
         GameManager.Instance.OnGameOverEvent += GameOverUI_OnGameOverEvent;
-        GameManager.Instance.OnGameQuitEvent += GameOverUI_OnGameQuitEvent;
+        GameManager.Instance.OnGameCleanupEvent += GameOverUI_OnGameCleanupEvent;
     }
 
-    private void GameOverUI_OnGameQuitEvent(object sender, EventArgs e) {
+    private void GameOverUI_OnGameCleanupEvent(object sender, EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(false);
     }
 
-    private void GameOverUI_OnGameOverEvent(object sender, System.EventArgs e) {
+    private void GameOverUI_OnGameOverEvent(object sender, EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(true);
 
-        int playerScore = GameManager.Instance.GetScore();
+        int playerScore = ScoreController.Instance.GetTotalScore();
 
         scoreText.SetText("Score: " + playerScore.ToString());
 
         PlayFabController.Instance.UpdateScoreTextFieldsNewScore(playerScore, rankedListText, scoreListText, nameListText);
     }
 
-    private void GameOverUI_OnGameSetupEvent(object sender, System.EventArgs e) {
+    private void GameOverUI_OnGameSetupEvent(object sender, EventArgs e) {
         gameOverUIHolder.gameObject.SetActive(false);
     }
 
     private void SaveAndQuit() {
-        int playerScore = GameManager.Instance.GetScore();
+        int playerScore = ScoreController.Instance.GetTotalScore();
         string playerInitial = playerInitialInputField.text;
         if (playerInitial.Length > 3) {
             playerInitial = playerInitial.Substring(0, 3);
@@ -61,6 +61,6 @@ public class GameOverUI : MonoBehaviour {
 
         PlayFabController.Instance.SaveHighScore(playerScore, playerInitial);
 
-        GameManager.Instance.QuitGame();
+        GameManager.Instance.CleanupGame();
     }
 }

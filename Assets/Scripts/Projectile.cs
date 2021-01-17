@@ -85,8 +85,8 @@ public class Projectile : MonoBehaviour {
         }
     }
 
-    private void Destroy() {
-        CannonController.Instance.DestroyProjectile(this);
+    private void OnDestory() {
+        CannonController.Instance.RemoveProjectile(this);
     }
 
     /* PreExplode State */
@@ -172,6 +172,6 @@ public class Projectile : MonoBehaviour {
     }
 
     private void FadeStateChange() {
-        Destroy();
+        Destroy(gameObject);
     }
 }

@@ -12,17 +12,11 @@ public class GameManager : MonoBehaviour {
      * 4. OnGameQuit (Call cleanup and same state as pre event)
      */
     public event EventHandler OnGameSetupEvent;
-    public event EventHandler OnScoreChangedEvent;
-    public event EventHandler OnLevelChangedEvent;
+    public event EventHandler OnLevelSetupEvent;
+    public event EventHandler OnLevelStartEvent;
+    public event EventHandler OnLevelEndEvent;
     public event EventHandler OnGameOverEvent;
-    public event EventHandler OnGameQuitEvent;
-
-    private int score;
-
-    [SerializeField] private float levelIncreaseTimerMax;
-    private float levelIncreaseTimer;
-
-    private int level;
+    public event EventHandler OnGameCleanupEvent;
 
     private bool isPaused;
 
@@ -38,6 +32,7 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Update() {
+        /*
         if (!IsPaused()) {
             levelIncreaseTimer -= Time.deltaTime;
             if (levelIncreaseTimer < 0f) {
@@ -54,44 +49,76 @@ public class GameManager : MonoBehaviour {
                 OnLevelChangedEvent?.Invoke(this, EventArgs.Empty);
             }
         }
+        */
     }
 
-    public void SetUpGame() {
-        score = 0;
-        level = 0;
-        levelIncreaseTimer = levelIncreaseTimerMax;
+    public void SetupGame() {
+        Debug.Log("GameManager SetupGame()");
 
+        ScoreController.Instance.Setup();
+        LevelController.Instance.Setup();
         CityController.Instance.Setup();
         AsteroidSpawnerController.Instance.Setup();
         CannonController.Instance.Setup();
 
-        Pause(false);
-
-        OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void QuitGame() {
         Pause(true);
 
+        OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
+
+        SetupLevel();
+    }
+
+    public void SetupLevel() {
+        Debug.Log("GameManager SetupLevel()");
+
+        ScoreController.Instance.SetupLevel();
+        LevelController.Instance.SetupLevel();
+        CityController.Instance.SetupLevel();
+        AsteroidSpawnerController.Instance.SetupLevel();
+        CannonController.Instance.SetupLevel();
+
+        Pause(true);
+
+        OnLevelSetupEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void StartLevel() {
+        Debug.Log("GameManager StartLevel()");
+
+        ScoreController.Instance.StartLevel();
+        LevelController.Instance.StartLevel();
+        CityController.Instance.StartLevel();
+        AsteroidSpawnerController.Instance.StartLevel();
+        CannonController.Instance.StartLevel();
+
+        Pause(false);
+
+        OnLevelStartEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void EndLevel() {
+        Debug.Log("GameManager EndLevel()");
+
+        Pause(true);
+
+        ScoreController.Instance.AddScore(ScoreController.ScoreCategories.CitiesSaved, CityController.Instance.GetNumberAliveCities() * 100);
+        ScoreController.Instance.AddScore(ScoreController.ScoreCategories.LevelPassed, 400 + LevelController.Instance.GetLevel() * 200);
+
+        OnLevelEndEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void CleanupGame() {
+        Debug.Log("GameManager CleanupGame()");
+
+        Pause(true);
+
+        ScoreController.Instance.Cleanup();
+        LevelController.Instance.Cleanup();
         CityController.Instance.Cleanup();
         AsteroidSpawnerController.Instance.Cleanup();
         CannonController.Instance.Cleanup();
 
-        OnGameQuitEvent?.Invoke(this, EventArgs.Empty);
-    }
-
-    public void AddScore(int s) {
-        score += s;
-
-        OnScoreChangedEvent?.Invoke(this, EventArgs.Empty);
-    }
-
-    public int GetLevel() {
-        return level;
-    }
-
-    public float GetLeveLTimer() {
-        return levelIncreaseTimer;
+        OnGameCleanupEvent?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameManager_OnDestoryCityEvent(object sender, System.EventArgs e) {
@@ -99,10 +126,6 @@ public class GameManager : MonoBehaviour {
             Pause(true);
             OnGameOverEvent?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-    public int GetScore() {
-        return score;
     }
 
     public bool IsPaused() {

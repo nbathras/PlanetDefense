@@ -23,7 +23,7 @@ public class AmmoUI : MonoBehaviour {
 
     private void Start() {
         GameManager.Instance.OnGameSetupEvent += AmmoUI_OnGameSetupEvent;
-        GameManager.Instance.OnGameQuitEvent += AmmoUI_OnGameQuiteEvent;
+        GameManager.Instance.OnGameCleanupEvent += AmmoUI_OnGameCleanupEvent;
 
         CannonController.Instance.OnAmmoAmountChangedEvent += AmmoUI_OnAmmoAmountChangedEvent;
 
@@ -35,19 +35,19 @@ public class AmmoUI : MonoBehaviour {
         ammoText.transform.position = ammoUIScreenPosition;
     }
 
-    private void AmmoUI_OnGameSetupEvent(object sender, System.EventArgs e) {
+    private void AmmoUI_OnGameSetupEvent(object sender, EventArgs e) {
         enabled = true;
         ammoUIHolder.gameObject.SetActive(true);
 
         ammoText.SetText(CannonController.Instance.GetAmmoCount().ToString());
     }
 
-    private void AmmoUI_OnGameQuiteEvent(object sender, EventArgs e) {
+    private void AmmoUI_OnGameCleanupEvent(object sender, EventArgs e) {
         enabled = false;
         ammoUIHolder.gameObject.SetActive(false);
     }
 
-    private void AmmoUI_OnAmmoAmountChangedEvent(object sender, System.EventArgs e) {
+    private void AmmoUI_OnAmmoAmountChangedEvent(object sender, EventArgs e) {
         ammoText.SetText(CannonController.Instance.GetAmmoCount().ToString());
     }
 }

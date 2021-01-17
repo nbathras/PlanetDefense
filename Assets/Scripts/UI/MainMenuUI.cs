@@ -22,11 +22,10 @@ public class MainMenuUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI nameListText;
 
     private void Awake() {
-        mainMenuHolder.gameObject.SetActive(true);
-        page1Holder.gameObject.SetActive(true);
-        page2Holder.gameObject.SetActive(false);
+        Enable();
+        DisplayManMenu();
 
-        newGameButton.onClick.AddListener(delegate { GameManager.Instance.SetUpGame(); });
+        newGameButton.onClick.AddListener(delegate { GameManager.Instance.SetupGame(); });
         exitButton.onClick.AddListener(delegate { Application.Quit(); });
         scoreButton.onClick.AddListener(delegate { DisplayScores(); });
         backButton.onClick.AddListener(delegate { DisplayManMenu(); });
@@ -34,15 +33,15 @@ public class MainMenuUI : MonoBehaviour {
 
     private void Start() {
         GameManager.Instance.OnGameSetupEvent += MainMenuUI_OnGameSetupEvent;
-        GameManager.Instance.OnGameQuitEvent += MainMenuUI_OnGameQuitEvent;
+        GameManager.Instance.OnGameCleanupEvent += MainMenuUI_OnGameCleanupEvent;
     }
 
-    private void MainMenuUI_OnGameQuitEvent(object sender, EventArgs e) {
-        mainMenuHolder.gameObject.SetActive(true);
+    private void MainMenuUI_OnGameCleanupEvent(object sender, EventArgs e) {
+        Enable();
     }
 
     private void MainMenuUI_OnGameSetupEvent(object sender, EventArgs e) {
-        mainMenuHolder.gameObject.SetActive(false);
+        Disable();
     }
 
     private void DisplayScores() {
@@ -55,5 +54,13 @@ public class MainMenuUI : MonoBehaviour {
     private void DisplayManMenu() {
         page1Holder.gameObject.SetActive(true);
         page2Holder.gameObject.SetActive(false);
+    }
+
+    private void Disable() {
+        mainMenuHolder.gameObject.SetActive(false);
+    }
+
+    private void Enable() {
+        mainMenuHolder.gameObject.SetActive(true);
     }
 }

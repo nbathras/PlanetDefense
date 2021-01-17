@@ -45,17 +45,17 @@ public class Asteroid : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D other) {
         if (other.CompareTag("Projectile")) {
-            GameManager.Instance.AddScore(10);
-            Destroy();
+            ScoreController.Instance.AddScore(ScoreController.ScoreCategories.AsteroidsDestoryed, 10);
+            Destroy(gameObject);
         } else if (other.CompareTag("Ground")) {
-            Destroy();
+            Destroy(gameObject);
         } else if (other.CompareTag("City")) {
             CityController.Instance.DestoryCity(other.gameObject.GetComponent<City>());
-            Destroy();
+            Destroy(gameObject);
         }
     }
 
-    private void Destroy() {
-        AsteroidSpawnerController.Instance.DestroyAsteroid(this);
+    private void OnDestroy() {
+        AsteroidSpawnerController.Instance.RemoveAsteroid(this);
     }
 }

@@ -28,49 +28,58 @@ public class InGameUI : MonoBehaviour {
     [Header("Buttons")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI levelText;
-    [SerializeField] private TextMeshProUGUI nextLeveLTimerText;
+    [SerializeField] private TextMeshProUGUI remainingAsteroidText;
 
     private void Awake() {
         inGameUIHolder.gameObject.SetActive(false);
     }
 
     private void Start() {
-        GameManager.Instance.OnScoreChangedEvent += InGameUI_OnScoreChangedEvent;
-        GameManager.Instance.OnLevelChangedEvent += InGameUI_OnLevelChangedEvent;
+        ScoreController.Instance.OnScoreChangedEvent += InGameUI_OnScoreChangedEvent;
+        AsteroidSpawnerController.Instance.OnAsteroidDestory += InGameUI_OnAsteroidDestory;
+        GameManager.Instance.OnLevelSetupEvent += InGameUI_OnLevelSetupEvent;
+        GameManager.Instance.OnLevelStartEvent += InGameUI_OnLevelStartEvent;
         GameManager.Instance.OnGameSetupEvent += InGameUI_OnGameSetupEvent;
-        GameManager.Instance.OnGameQuitEvent += InGameUI_OnGameQuitEvent;
+        GameManager.Instance.OnGameCleanupEvent += InGameUI_OnGameCleanupEvent;
     }
 
-    private void Update() {
-        if (!GameManager.Instance.IsPaused()) {
-            nextLeveLTimerText.SetText("Next Level In: " + String.Format("{0:0.##}", GameManager.Instance.GetLeveLTimer()));
-        }
+    private void InGameUI_OnLevelStartEvent(object sender, EventArgs e) {
+        UpdateRemainingAsteroidText();
     }
 
-    private void InGameUI_OnLevelChangedEvent(object sender, EventArgs e) {
+    private void InGameUI_OnAsteroidDestory(object sender, EventArgs e) {
+        UpdateRemainingAsteroidText();
+    }
+
+    private void InGameUI_OnLevelSetupEvent(object sender, EventArgs e) {
         UpdateLevelText();
     }
 
-    private void InGameUI_OnGameQuitEvent(object sender, EventArgs e) {
+    private void InGameUI_OnGameCleanupEvent(object sender, EventArgs e) {
         inGameUIHolder.gameObject.SetActive(false);
     }
 
-    private void InGameUI_OnScoreChangedEvent(object sender, System.EventArgs e) {
+    private void InGameUI_OnScoreChangedEvent(object sender, EventArgs e) {
         UpdateScoreText();
     }
 
-    private void InGameUI_OnGameSetupEvent(object sender, System.EventArgs e) {
+    private void InGameUI_OnGameSetupEvent(object sender, EventArgs e) {
         inGameUIHolder.gameObject.SetActive(true);
 
         UpdateScoreText();
         UpdateLevelText();
+        UpdateRemainingAsteroidText();
     }
 
     private void UpdateScoreText() {
-        scoreText.SetText("Score: " + GameManager.Instance.GetScore().ToString());
+        scoreText.SetText("Score: " + ScoreController.Instance.GetTotalScore().ToString());
     }
 
     private void UpdateLevelText() {
-        levelText.SetText("Level: " + (GameManager.Instance.GetLevel() + 1).ToString());
+        levelText.SetText("Level: " + LevelController.Instance.GetLevel().ToString());
+    }
+
+    private void UpdateRemainingAsteroidText() {
+        remainingAsteroidText.SetText("Asteroid Left: " + AsteroidSpawnerController.Instance.GetRemainingAsteroids());
     }
 }

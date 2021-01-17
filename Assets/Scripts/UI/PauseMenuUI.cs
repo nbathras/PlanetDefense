@@ -13,16 +13,16 @@ public class PauseMenuUI : MonoBehaviour {
     private void Awake() {
         pauseMenuUIHolder.gameObject.SetActive(false);
 
-        exitButton.onClick.AddListener(delegate { GameManager.Instance.QuitGame(); });
-        restartButton.onClick.AddListener(delegate { GameManager.Instance.SetUpGame(); });
+        exitButton.onClick.AddListener(delegate { GameManager.Instance.CleanupGame(); });
+        restartButton.onClick.AddListener(delegate { GameManager.Instance.SetupGame(); });
     }
 
     private void Start() {
         GameManager.Instance.OnGameSetupEvent += PauseMenuUI_OnGameSetupEvent;
-        GameManager.Instance.OnGameQuitEvent += PauseMenuUI_OnGameQuitEvent;
+        GameManager.Instance.OnGameCleanupEvent += PauseMenuUI_OnGameCleanupEvent;
     }
 
-    private void PauseMenuUI_OnGameQuitEvent(object sender, EventArgs e) {
+    private void PauseMenuUI_OnGameCleanupEvent(object sender, EventArgs e) {
         pauseMenuUIHolder.gameObject.SetActive(false);
     }
 

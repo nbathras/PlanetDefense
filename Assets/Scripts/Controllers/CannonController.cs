@@ -48,17 +48,30 @@ public class CannonController : MonoBehaviour {
 
     public void Setup() {
         Cleanup();
-        Pause(false);
+        Pause(true);
 
         SetAmountCount(ammoCountStart);
 
         firedProjectileList = new List<Projectile>();
     }
 
+    public void SetupLevel() {
+        Cleanup();
+        Pause(true);
+        SetAmountCount(ammoCount + ammoCountStart);
+        firedProjectileList = new List<Projectile>();
+    }
+    
+    public void StartLevel() {
+        Pause(false);
+    }
+
     public void Cleanup() {
         if (firedProjectileList != null) {
             for (int i = 0; i < firedProjectileList.Count; i++) {
-                Destroy(firedProjectileList[i].gameObject);
+                if (firedProjectileList[i]) {
+                    Destroy(firedProjectileList[i].gameObject);
+                }
             }
 
             firedProjectileList = null;
@@ -87,19 +100,13 @@ public class CannonController : MonoBehaviour {
         return ammoCount;
     }
 
-    public int GetScore() {
-        return GetAmmoCount();
-    }
-
-    public bool DestroyProjectile(Projectile projectile) {
+    public bool RemoveProjectile(Projectile projectile) {
         if (projectile == null) {
             throw new Exception("Error: Attempted to destory an asteroid with a null references");
         }
         if (!firedProjectileList.Remove(projectile)) {
             throw new Exception("Error: Attempted to destory an asteroid not in asteroid list");
         }
-
-        Destroy(projectile.gameObject);
 
         return true;
     }

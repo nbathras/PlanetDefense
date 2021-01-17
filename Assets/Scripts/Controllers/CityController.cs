@@ -20,12 +20,20 @@ public class CityController : MonoBehaviour {
 
     public void Setup() {
         Cleanup();
-        Pause(false);
+        Pause(true);
 
         cityList = new List<City>();
         for (int i = 0; i < cityHolderList.Count; i++) {
             cityList.Add(City.Create(cityHolderList[i], "City " + i.ToString()));
         }
+    }
+
+    public void SetupLevel() {
+        Pause(true);
+    }
+
+    public void StartLevel() {
+        Pause(false);
     }
 
     public void Cleanup() {
