@@ -31,7 +31,7 @@ public class AmmoUI : MonoBehaviour {
     }
 
     private void Update() {
-        Vector3 ammoUIScreenPosition = mainCamera.WorldToScreenPoint(ammoUIWorldTransform.position) + (new Vector3(0, -5, 0));
+        Vector3 ammoUIScreenPosition = mainCamera.WorldToScreenPoint(ammoUIWorldTransform.position);
         ammoText.transform.position = ammoUIScreenPosition;
     }
 

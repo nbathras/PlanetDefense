@@ -30,23 +30,23 @@ public class AsteroidSpawnerController : MonoBehaviour {
         ValidateSerializeField();
 
         mainCamera = Camera.main;
-        Pause(true);
     }
 
     private void Update() {
-        levelLengthTimer -= Time.deltaTime;
-        SpawnAsteroidWave();
-        if (levelLengthTimer < -1f && asteroidList.Count == 0) {
-            GameManager.Instance.EndLevel();
+        if (!PauseMenuUI.IsGamePaused) {
+            levelLengthTimer -= Time.deltaTime;
+            SpawnAsteroidWave();
+            if (levelLengthTimer < -1f && asteroidList.Count == 0) {
+                GameManager.Instance.EndLevel();
+            }
         }
     }
     
     public void Setup() {
-        Pause(true);
+        // Do nothing
     }
 
     public void SetupLevel() {
-        Pause(true);
         Cleanup();
         asteroidList = new List<Asteroid>();
         GenerateAsteroidSpawnTimes();
@@ -54,11 +54,10 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
     public void StartLevel() {
         levelLengthTimer = levelLengthTimerMax;
-        Pause(false);
     }
 
     public void EndLevel() {
-        Pause(true);
+        // Do nthing
     }
 
     public void Cleanup() {
@@ -72,8 +71,6 @@ public class AsteroidSpawnerController : MonoBehaviour {
         }
 
         asteroidSpawnTimes = null;
-
-        Pause(true);
     }
 
     private void GenerateAsteroidSpawnTimes() {
@@ -127,17 +124,6 @@ public class AsteroidSpawnerController : MonoBehaviour {
         asteroidList.Add(Asteroid.Create(spawnPosition, direction, "Asteroid " + asteroidList.ToString()));
     }
 
-    public void Pause(bool isPaused) {
-        Instance.enabled = !isPaused;
-        if (asteroidList != null) {
-            for (int i = 0; i < asteroidList.Count; i++) {
-                if (asteroidList[i]) {
-                    asteroidList[i].enabled = !isPaused;
-                }
-            }
-        }
-    }
-
     public void RemoveAsteroid(Asteroid asteroid) {
         if (!asteroidList.Remove(asteroid)) {
             throw new Exception("Error: Attempted to destory an asteroid not in asteroid list");
@@ -145,23 +131,6 @@ public class AsteroidSpawnerController : MonoBehaviour {
 
         OnAsteroidDestory?.Invoke(this, EventArgs.Empty);
     }
-
-    /*
-    public bool DestroyAsteroid(Asteroid asteroid) {
-        if (asteroid == null) {
-            throw new Exception("Error: Attempted to destory an asteroid with a null references");
-        }
-        if (!asteroidList.Remove(asteroid)) {
-            throw new Exception("Error: Attempted to destory an asteroid not in asteroid list");
-        }
-
-        Destroy(asteroid.gameObject);
-
-        OnAsteroidDestory?.Invoke(this, EventArgs.Empty);
-
-        return true;
-    }
-    */
 
     public int GetRemainingAsteroids() {
         int r = 0;

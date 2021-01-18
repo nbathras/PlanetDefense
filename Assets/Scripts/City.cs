@@ -54,34 +54,25 @@ public class City : MonoBehaviour {
     }
 
     private void Update() {
-        reloadTimer -= Time.deltaTime;
-        if (reloadTimer < 0f) {
-            reloadTimer = reloadTimerMax;
-            reloadList.Add(Reload.Create(this, positionList));
-        }
-    }
-
-    public void Pause(bool isPaused) {
-        enabled = !isPaused;
-        if (reloadList != null) {
-            for (int i = 0; i < reloadList.Count; i++) {
-                if (reloadList[i] != null) {
-                    reloadList[i].enabled = !isPaused;
-                }
+        if (!PauseMenuUI.IsGamePaused) {
+            reloadTimer -= Time.deltaTime;
+            if (reloadTimer < 0f) {
+                reloadTimer = reloadTimerMax;
+                reloadList.Add(Reload.Create(this, positionList));
             }
         }
     }
 
-    public bool DestoryReload(Reload reload) {
+    public void RemoveReload(Reload reload) {
         if (reload == null) {
             throw new Exception("Error: Attempted to destory an reload with a null references");
         }
         if (!reloadList.Remove(reload)) {
             throw new Exception("Error: Attempted to destory an reload not in asteroid list");
         }
+    }
 
-        Destroy(reload.gameObject);
-
-        return true;
+    public void OnDestroy() {
+        CityController.Instance.RemoveCity(this);
     }
 }

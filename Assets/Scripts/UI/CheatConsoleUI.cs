@@ -28,7 +28,7 @@ public class CheatConsoleUI : MonoBehaviour {
             if (cheatCode == "KILL_ALL") {
                 List<City> cityList = CityController.Instance.GetCities();
                 while (cityList.Count > 0) {
-                    CityController.Instance.DestoryCity(cityList[0]);
+                    Destroy(cityList[0].gameObject);
                 }
             }
         }

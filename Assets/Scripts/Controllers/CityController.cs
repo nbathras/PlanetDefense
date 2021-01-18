@@ -15,12 +15,10 @@ public class CityController : MonoBehaviour {
         if (Instance == null) {
             Instance = this;
         }
-        Pause(true);
     }
 
     public void Setup() {
         Cleanup();
-        Pause(true);
 
         cityList = new List<City>();
         for (int i = 0; i < cityHolderList.Count; i++) {
@@ -29,11 +27,11 @@ public class CityController : MonoBehaviour {
     }
 
     public void SetupLevel() {
-        Pause(true);
+        // Do nthing
     }
 
     public void StartLevel() {
-        Pause(false);
+        // Do nothing
     }
 
     public void Cleanup() {
@@ -45,18 +43,6 @@ public class CityController : MonoBehaviour {
             }
 
             cityList = null;
-        }
-        Pause(true);
-    }
-
-    public void Pause(bool isPaused) {
-        enabled = !isPaused;
-        if (cityList != null) {
-            for (int i = 0; i < cityList.Count; i++) {
-                if (cityList[i] != null) {
-                    cityList[i].Pause(isPaused);
-                }
-            }
         }
     }
 
@@ -72,7 +58,7 @@ public class CityController : MonoBehaviour {
         return cityList.Count * 100;
     }
 
-    public bool DestoryCity(City city) {
+    public void RemoveCity(City city) {
         if (city == null) {
             throw new Exception("Error: Attempted to destory an city with a null references");
         }
@@ -80,10 +66,6 @@ public class CityController : MonoBehaviour {
             throw new Exception("Error: Attempted to remove an city not in city list");
         }
 
-        Destroy(city.gameObject);
-
         OnDestoryCityEvent?.Invoke(this, EventArgs.Empty);
-
-        return true;
     }
 }

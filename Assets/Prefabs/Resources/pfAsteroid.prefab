@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   despawnTimerMax: 5
-  speed: 3
+  speed: 2
 --- !u!120 &3773409047471813420
 LineRenderer:
   m_ObjectHideFlags: 0

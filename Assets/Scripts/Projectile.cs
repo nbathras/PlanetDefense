@@ -60,32 +60,34 @@ public class Projectile : MonoBehaviour {
     }
 
     private void Update() {
-        if (projectileState == ProjectileState.PreExplode) {
-            PreExplosionAction();
-            if (PreExplosionCondition()) {
-                PreExplosionStateChange();
+        if (!PauseMenuUI.IsGamePaused) {
+            if (projectileState == ProjectileState.PreExplode) {
+                PreExplosionAction();
+                if (PreExplosionCondition()) {
+                    PreExplosionStateChange();
+                }
+            } else if (projectileState == ProjectileState.Flash) {
+                FlashAction();
+                if (FlashCondition()) {
+                    FlashStateChange();
+                }
+            } else if (projectileState == ProjectileState.Explode) {
+                ExplodeAction();
+                if (ExplodeCondition()) {
+                    ExplodeStateChange();
+                }
+            } else if (projectileState == ProjectileState.Fade) {
+                FadeAction();
+                if (FadeCondition()) {
+                    FadeStateChange();
+                }
+            } else {
+                throw new System.Exception("Error: The current state is not handled by the projectile");
             }
-        } else if (projectileState == ProjectileState.Flash) {
-            FlashAction();
-            if (FlashCondition()) {
-                FlashStateChange();
-            }
-        } else if (projectileState == ProjectileState.Explode) {
-            ExplodeAction();
-            if (ExplodeCondition()) {
-                ExplodeStateChange();
-            }
-        } else if (projectileState == ProjectileState.Fade) {
-            FadeAction();
-            if (FadeCondition()) {
-                FadeStateChange();
-            }
-        } else {
-            throw new System.Exception("Error: The current state is not handled by the projectile");
         }
     }
 
-    private void OnDestory() {
+    private void OnDestroy() {
         CannonController.Instance.RemoveProjectile(this);
     }
 

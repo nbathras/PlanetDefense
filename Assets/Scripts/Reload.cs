@@ -25,18 +25,24 @@ public class Reload : MonoBehaviour {
     private int currentIndex = 0;
 
     private void Update() {
-        if (currentIndex == transferPositionList.Length) {
-            CannonController.Instance.SetAmountCount(CannonController.Instance.GetAmmoCount() + 1);
-            spawnCity.DestoryReload(this);
-        } else {
-            Vector3 targetPosition = transferPositionList[currentIndex];
-            Vector3 normalizedDirection = (targetPosition - transform.position).normalized;
+        if (!PauseMenuUI.IsGamePaused) {
+            if (currentIndex == transferPositionList.Length) {
+                CannonController.Instance.SetAmountCount(CannonController.Instance.GetAmmoCount() + 1);
+                Destroy(gameObject);
+            } else {
+                Vector3 targetPosition = transferPositionList[currentIndex];
+                Vector3 normalizedDirection = (targetPosition - transform.position).normalized;
 
-            transform.position += normalizedDirection * Time.deltaTime * travelSpeed;
+                transform.position += normalizedDirection * Time.deltaTime * travelSpeed;
 
-            if (Vector3.Distance(transform.position, targetPosition) < 0.01f) {
-                currentIndex += 1;
+                if (Vector3.Distance(transform.position, targetPosition) < 0.01f) {
+                    currentIndex += 1;
+                }
             }
         }
+    }
+
+    private void OnDestroy() {
+        spawnCity.RemoveReload(this);
     }
 }

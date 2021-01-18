@@ -18,8 +18,6 @@ public class GameManager : MonoBehaviour {
     public event EventHandler OnGameOverEvent;
     public event EventHandler OnGameCleanupEvent;
 
-    private bool isPaused;
-
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -28,28 +26,6 @@ public class GameManager : MonoBehaviour {
 
     private void Start() {
         CityController.Instance.OnDestoryCityEvent += GameManager_OnDestoryCityEvent;
-        Pause(true);
-    }
-
-    private void Update() {
-        /*
-        if (!IsPaused()) {
-            levelIncreaseTimer -= Time.deltaTime;
-            if (levelIncreaseTimer < 0f) {
-
-                level += 1;
-                levelIncreaseTimer = levelIncreaseTimerMax;
-
-                AddScore(CityController.Instance.GetScore() + CannonController.Instance.GetScore() + level * 100);
-
-                CityController.Instance.Setup();
-                AsteroidSpawnerController.Instance.Setup();
-                CannonController.Instance.Setup();
-
-                OnLevelChangedEvent?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        */
     }
 
     public void SetupGame() {
@@ -60,8 +36,6 @@ public class GameManager : MonoBehaviour {
         CityController.Instance.Setup();
         AsteroidSpawnerController.Instance.Setup();
         CannonController.Instance.Setup();
-
-        Pause(true);
 
         OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
 
@@ -77,13 +51,13 @@ public class GameManager : MonoBehaviour {
         AsteroidSpawnerController.Instance.SetupLevel();
         CannonController.Instance.SetupLevel();
 
-        Pause(true);
-
         OnLevelSetupEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public void StartLevel() {
         Debug.Log("GameManager StartLevel()");
+
+        PauseMenuUI.UnPauseGame();
 
         ScoreController.Instance.StartLevel();
         LevelController.Instance.StartLevel();
@@ -91,15 +65,13 @@ public class GameManager : MonoBehaviour {
         AsteroidSpawnerController.Instance.StartLevel();
         CannonController.Instance.StartLevel();
 
-        Pause(false);
-
         OnLevelStartEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public void EndLevel() {
         Debug.Log("GameManager EndLevel()");
 
-        Pause(true);
+        PauseMenuUI.PauseGame();
 
         ScoreController.Instance.AddScore(ScoreController.ScoreCategories.CitiesSaved, CityController.Instance.GetNumberAliveCities() * 100);
         ScoreController.Instance.AddScore(ScoreController.ScoreCategories.LevelPassed, 400 + LevelController.Instance.GetLevel() * 200);
@@ -109,8 +81,6 @@ public class GameManager : MonoBehaviour {
 
     public void CleanupGame() {
         Debug.Log("GameManager CleanupGame()");
-
-        Pause(true);
 
         ScoreController.Instance.Cleanup();
         LevelController.Instance.Cleanup();
@@ -123,19 +93,7 @@ public class GameManager : MonoBehaviour {
 
     private void GameManager_OnDestoryCityEvent(object sender, System.EventArgs e) {
         if (CityController.Instance.GetNumberAliveCities() <= 0) {
-            Pause(true);
             OnGameOverEvent?.Invoke(this, EventArgs.Empty);
         }
-    }
-
-    public bool IsPaused() {
-        return isPaused;
-    }
-
-    public void Pause(bool isPaused) {
-        this.isPaused = isPaused;
-        AsteroidSpawnerController.Instance.Pause(isPaused);
-        CannonController.Instance.Pause(isPaused);
-        CityController.Instance.Pause(isPaused);
     }
 }

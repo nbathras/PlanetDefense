@@ -33,13 +33,15 @@ public class Asteroid : MonoBehaviour {
     }
 
     private void Update() {
-        transform.position += normalizedDirection * speed * Time.deltaTime;
-        lineRenderer.SetPosition(0, spawnPosition);
-        lineRenderer.SetPosition(1, transform.position);
+        if (!PauseMenuUI.IsGamePaused) {
+            transform.position += normalizedDirection * speed * Time.deltaTime;
+            lineRenderer.SetPosition(0, spawnPosition);
+            lineRenderer.SetPosition(1, transform.position);
 
-        despawnTimer -= Time.deltaTime;
-        if (despawnTimer < 0f) {
-            Destroy(gameObject);
+            despawnTimer -= Time.deltaTime;
+            if (despawnTimer < 0f) {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -50,7 +52,9 @@ public class Asteroid : MonoBehaviour {
         } else if (other.CompareTag("Ground")) {
             Destroy(gameObject);
         } else if (other.CompareTag("City")) {
-            CityController.Instance.DestoryCity(other.gameObject.GetComponent<City>());
+            // Destory city
+            Destroy(other.gameObject);
+            // Destory asteroid
             Destroy(gameObject);
         }
     }
