@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class PauseMenuUI : MonoBehaviour {
 
     public static bool IsGamePaused;
+    public static bool IsPauseable;
 
     [Header("Transform Holder")]
     [SerializeField] private Transform pauseMenuUIHolder;
@@ -15,6 +16,7 @@ public class PauseMenuUI : MonoBehaviour {
 
     private void Awake() {
         IsGamePaused = true;
+        IsPauseable = false;
 
         pauseMenuUIHolder.gameObject.SetActive(false);
 
@@ -25,22 +27,38 @@ public class PauseMenuUI : MonoBehaviour {
     private void Start() {
         GameManager.Instance.OnGameSetupEvent += PauseMenuUI_OnGameSetupEvent;
         GameManager.Instance.OnGameCleanupEvent += PauseMenuUI_OnGameCleanupEvent;
+        GameManager.Instance.OnLevelStartEvent += PauseMenuUI_OnLevelStartEvent;
+        GameManager.Instance.OnLevelEndEvent += PauseMenuUI_OnLevelEndEvent;
+    }
+
+    private void PauseMenuUI_OnLevelEndEvent(object sender, EventArgs e) {
+        IsPauseable = false;
+    }
+
+    private void PauseMenuUI_OnLevelStartEvent(object sender, EventArgs e) {
+        IsPauseable = true;
     }
 
     private void PauseMenuUI_OnGameCleanupEvent(object sender, EventArgs e) {
         pauseMenuUIHolder.gameObject.SetActive(false);
+        IsGamePaused = true;
+        IsPauseable = false;
     }
 
     private void PauseMenuUI_OnGameSetupEvent(object sender, System.EventArgs e) {
         pauseMenuUIHolder.gameObject.SetActive(false);
+        IsGamePaused = true;
+        IsPauseable = false;
     }
 
     private void Update() {
-        if (Input.GetKeyDown(KeyCode.P)) {
-            IsGamePaused = !IsGamePaused;
-            // bool isPaused = !GameManager.Instance.IsPaused();
-            pauseMenuUIHolder.gameObject.SetActive(IsGamePaused);
-            // GameManager.Instance.Pause(isPaused);
+        if (IsPauseable) {
+            if (Input.GetKeyDown(KeyCode.P)) {
+                IsGamePaused = !IsGamePaused;
+                // bool isPaused = !GameManager.Instance.IsPaused();
+                pauseMenuUIHolder.gameObject.SetActive(IsGamePaused);
+                // GameManager.Instance.Pause(isPaused);
+            }
         }
     }
 

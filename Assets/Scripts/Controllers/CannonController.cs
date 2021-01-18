@@ -91,13 +91,15 @@ public class CannonController : MonoBehaviour {
 
     public void SetupLevel() {
         Cleanup();
-        SetAmountCount(ammoCount + ammoCountStart);
+        SetAmountCount(ammoCount);
         firedProjectileList = new List<Projectile>();
 
         laser.gameObject.SetActive(false);
         laserReloadTimer = -1;
         laserTimer = -1;
         SetLaserSprite();
+
+        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
     }
     
     public void StartLevel() {
