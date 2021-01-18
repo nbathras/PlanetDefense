@@ -46,7 +46,8 @@ public class Asteroid : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Projectile")) {
+        if (other.CompareTag("Projectile") || other.CompareTag("Laser")) {
+            Debug.Log(other.tag);
             ScoreController.Instance.AddScore(ScoreController.ScoreCategories.AsteroidsDestoryed, 10);
             Destroy(gameObject);
         } else if (other.CompareTag("Ground")) {

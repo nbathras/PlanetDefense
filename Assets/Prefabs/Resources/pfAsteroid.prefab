@@ -97,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d88984f31e9d28c4bb61f518aac4089e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  despawnTimerMax: 5
+  despawnTimerMax: 10
   speed: 2
 --- !u!120 &3773409047471813420
 LineRenderer:

@@ -8,6 +8,7 @@ TagManager:
   - Ground
   - Asteroid
   - City
+  - Laser
   layers:
   - Default
   - TransparentFX
