@@ -79,6 +79,14 @@ public class GameManager : MonoBehaviour {
         OnLevelEndEvent?.Invoke(this, EventArgs.Empty);
     }
 
+    public void EndGame() {
+        Debug.Log("GameManager EndGame()");
+
+        PauseMenuUI.PauseGame();
+
+        OnGameOverEvent?.Invoke(this, EventArgs.Empty);
+    }
+
     public void CleanupGame() {
         Debug.Log("GameManager CleanupGame()");
 
@@ -93,7 +101,7 @@ public class GameManager : MonoBehaviour {
 
     private void GameManager_OnDestoryCityEvent(object sender, System.EventArgs e) {
         if (CityController.Instance.GetNumberAliveCities() <= 0) {
-            OnGameOverEvent?.Invoke(this, EventArgs.Empty);
+            EndGame();
         }
     }
 }

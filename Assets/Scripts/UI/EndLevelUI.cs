@@ -91,7 +91,7 @@ public class EndLevelUI : MonoBehaviour {
         SetPreviousScoreText(ScoreController.Instance.GetPreviousLevelsScore());
         Dictionary<ScoreController.ScoreCategories, int> levelScoreHistory = ScoreController.Instance.GetLevelScores(LevelController.Instance.GetLevel());
         SetScoreTexts(
-            levelScoreHistory[ScoreController.ScoreCategories.AsteroidsDestoryed], 
+            levelScoreHistory[ScoreController.ScoreCategories.AsteroidsDestroyed], 
             levelScoreHistory[ScoreController.ScoreCategories.CitiesSaved], 
             levelScoreHistory[ScoreController.ScoreCategories.LevelPassed], 
             ScoreController.Instance.GetTotalScore()

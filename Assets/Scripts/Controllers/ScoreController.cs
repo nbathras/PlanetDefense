@@ -7,7 +7,7 @@ public class ScoreController : MonoBehaviour {
     public static ScoreController Instance;
 
     public enum ScoreCategories {
-        AsteroidsDestoryed,
+        AsteroidsDestroyed,
         CitiesSaved,
         LevelPassed
     }
@@ -32,7 +32,7 @@ public class ScoreController : MonoBehaviour {
     public void SetupLevel() {
         scoreHistory.Add(new Dictionary<ScoreCategories, int>());
         int i = scoreHistory.Count - 1;
-        scoreHistory[i].Add(ScoreCategories.AsteroidsDestoryed, 0);
+        scoreHistory[i].Add(ScoreCategories.AsteroidsDestroyed, 0);
         scoreHistory[i].Add(ScoreCategories.CitiesSaved, 0);
         scoreHistory[i].Add(ScoreCategories.LevelPassed, 0);
     }

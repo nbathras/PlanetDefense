@@ -9,6 +9,7 @@ TagManager:
   - Asteroid
   - City
   - Laser
+  - PlasmaProjectile
   layers:
   - Default
   - TransparentFX

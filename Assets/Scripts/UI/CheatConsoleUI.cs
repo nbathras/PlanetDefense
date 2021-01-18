@@ -31,6 +31,10 @@ public class CheatConsoleUI : MonoBehaviour {
                     Destroy(cityList[0].gameObject);
                 }
             }
+
+            if (cheatCode == "a") {
+                Alien.Create();
+            }
         }
     }
 }
