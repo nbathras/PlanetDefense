@@ -103,8 +103,10 @@ public class PlayFabController : MonoBehaviour {
         }, resultGet => {
             List<Score> highScoresList = new List<Score>();
             if (resultGet.Data.ContainsKey(HIGH_SCORES_KEY)) {
-                string highScoresString = resultGet.Data[HIGH_SCORES_KEY].Value.ToString();
-                highScoresList = ConvertHighScoresStringToList(highScoresString);
+                if (resultGet.Data[HIGH_SCORES_KEY].Value != null) {
+                    string highScoresString = resultGet.Data[HIGH_SCORES_KEY].Value.ToString();
+                    highScoresList = ConvertHighScoresStringToList(highScoresString);
+                }
             }
 
             rankedListText.SetText("");
