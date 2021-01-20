@@ -43,14 +43,18 @@ public class Alien : Enemy {
     private Vector3 normalizedDirection;
 
     [SerializeField] private Transform firePosition;
+    [SerializeField] private GameObject shield;
 
     [SerializeField] private float fireRateTimerMax;
     private float fireRateTimer;
+    [SerializeField] private float shieldTimerMax;
+    private float shieldTimer;
 
     [SerializeField] private float speed;
 
     private void Awake() {
         fireRateTimer = fireRateTimerMax * 1.5f;
+        DeactiveShield();
     }
 
     private void Update() {
@@ -71,13 +75,33 @@ public class Alien : Enemy {
                 }
                 normalizedDirection = (targetPostion - transform.position).normalized;
             } 
+
+            if (shield.activeSelf) {
+                shieldTimer -= Time.deltaTime;
+                if (shieldTimer < 0f) {
+                    DeactiveShield();
+                }
+            }
         }
     }
 
+    private void ActivateShield() {
+        shield.SetActive(true);
+        shieldTimer = shieldTimerMax;
+    }
+
+    private void DeactiveShield() {
+        shield.SetActive(false);
+        shieldTimer = -1;
+    }
+
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.CompareTag("Projectile") || other.CompareTag("Laser")) {
+        if (other.CompareTag("Projectile")) {
             ScoreController.Instance.AddScore(ScoreController.ScoreCategories.AsteroidsDestroyed, 50);
             Destroy(gameObject);
+        }
+        if (other.CompareTag("Laser")) {
+            ActivateShield();
         }
     }
 
