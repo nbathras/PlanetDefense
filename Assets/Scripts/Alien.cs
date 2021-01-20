@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class Alien : MonoBehaviour {
-    public static Alien Create() {
+public class Alien : Enemy {
+
+    public static Alien Create(string name) {
         Transform pfAlien = Resources.Load<Transform>("pfAlien");
 
         // Corner screen coordinates 
@@ -31,6 +32,7 @@ public class Alien : MonoBehaviour {
         alien.rightMovePosition = rightMovePosition;
         alien.targetPostion = targetPostion;
         alien.normalizedDirection = (targetPostion - spawnPosition).normalized;
+        alien.name = name;
 
         return alien;
     }
@@ -84,5 +86,9 @@ public class Alien : MonoBehaviour {
 
         int index = Random.Range(0, cityList.Count - 1);
         return cityList[index].transform.position;
+    }
+
+    private void OnDestroy() {
+        EnemySpawnerController.Instance.RemoveAlien(this);
     }
 }

@@ -1,7 +1,16 @@
 ﻿using UnityEngine;
 
-public class Asteroid : MonoBehaviour {
-    public static Asteroid Create(Vector3 spawnPosition, Vector3 direction, string name) {
+public class Asteroid : Enemy {
+    public static Asteroid Create(string name) {
+        // Corner locations in world coordinates
+        Vector2 upperLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height));
+        Vector2 upperRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height));
+        Vector2 lowerLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
+        Vector2 lowerRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0));
+
+        Vector2 spawnPosition = new Vector2(UnityEngine.Random.Range(upperLeft.x, upperRight.x), upperRight.y + .075f);
+        Vector2 direction = (new Vector2(UnityEngine.Random.Range(lowerLeft.x, lowerRight.x), lowerRight.y) - spawnPosition).normalized;
+
         Transform pfAsteroid = Resources.Load<Transform>("pfAsteroid");
         Transform asteroidTransform = Instantiate(pfAsteroid, spawnPosition, Quaternion.identity);
 
@@ -27,7 +36,7 @@ public class Asteroid : MonoBehaviour {
     private void Awake() {
         despawnTimer = despawnTimerMax;
 
-        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer = base.GetComponent<LineRenderer>();
         lineRenderer.startWidth = .02f;
         lineRenderer.endWidth = .02f;
     }
@@ -60,6 +69,6 @@ public class Asteroid : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        AsteroidSpawnerController.Instance.RemoveAsteroid(this);
+        EnemySpawnerController.Instance.RemoveAsteroid(this);
     }
 }

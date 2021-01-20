@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour {
         ScoreController.Instance.Setup();
         LevelController.Instance.Setup();
         CityController.Instance.Setup();
-        AsteroidSpawnerController.Instance.Setup();
+        EnemySpawnerController.Instance.Setup();
         CannonController.Instance.Setup();
 
         OnGameSetupEvent?.Invoke(this, EventArgs.Empty);
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour {
         ScoreController.Instance.SetupLevel();
         LevelController.Instance.SetupLevel();
         CityController.Instance.SetupLevel();
-        AsteroidSpawnerController.Instance.SetupLevel();
+        EnemySpawnerController.Instance.SetupLevel();
         CannonController.Instance.SetupLevel();
 
         OnLevelSetupEvent?.Invoke(this, EventArgs.Empty);
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour {
         ScoreController.Instance.StartLevel();
         LevelController.Instance.StartLevel();
         CityController.Instance.StartLevel();
-        AsteroidSpawnerController.Instance.StartLevel();
+        EnemySpawnerController.Instance.StartLevel();
         CannonController.Instance.StartLevel();
 
         OnLevelStartEvent?.Invoke(this, EventArgs.Empty);
@@ -93,7 +93,7 @@ public class GameManager : MonoBehaviour {
         ScoreController.Instance.Cleanup();
         LevelController.Instance.Cleanup();
         CityController.Instance.Cleanup();
-        AsteroidSpawnerController.Instance.Cleanup();
+        EnemySpawnerController.Instance.Cleanup();
         CannonController.Instance.Cleanup();
 
         OnGameCleanupEvent?.Invoke(this, EventArgs.Empty);

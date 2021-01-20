@@ -36,7 +36,7 @@ public class InGameUI : MonoBehaviour {
 
     private void Start() {
         ScoreController.Instance.OnScoreChangedEvent += InGameUI_OnScoreChangedEvent;
-        AsteroidSpawnerController.Instance.OnAsteroidDestory += InGameUI_OnAsteroidDestory;
+        EnemySpawnerController.Instance.OnEnemyDestory += InGameUI_OnEnemyDestory;
         GameManager.Instance.OnLevelSetupEvent += InGameUI_OnLevelSetupEvent;
         GameManager.Instance.OnLevelStartEvent += InGameUI_OnLevelStartEvent;
         GameManager.Instance.OnGameSetupEvent += InGameUI_OnGameSetupEvent;
@@ -47,7 +47,7 @@ public class InGameUI : MonoBehaviour {
         UpdateRemainingAsteroidText();
     }
 
-    private void InGameUI_OnAsteroidDestory(object sender, EventArgs e) {
+    private void InGameUI_OnEnemyDestory(object sender, EventArgs e) {
         UpdateRemainingAsteroidText();
     }
 
@@ -80,6 +80,6 @@ public class InGameUI : MonoBehaviour {
     }
 
     private void UpdateRemainingAsteroidText() {
-        remainingAsteroidText.SetText("Asteroid Left: " + AsteroidSpawnerController.Instance.GetRemainingAsteroids());
+        remainingAsteroidText.SetText("Enemies Left: " + EnemySpawnerController.Instance.GetRemainingEnemies());
     }
 }

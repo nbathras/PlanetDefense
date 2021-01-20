@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CheatConsoleUI : MonoBehaviour {
@@ -17,23 +18,45 @@ public class CheatConsoleUI : MonoBehaviour {
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
-            cheatConsoleUIHolder.gameObject.SetActive(!cheatConsoleUIHolder.gameObject.activeSelf);
+            if (cheatConsoleUIHolder.gameObject.activeSelf) {
+                Disable();
+            } else {
+                Enable();
+            }
         }
+    }
+
+    private void Disable() {
+        cheatConsoleUIHolder.gameObject.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(null);
+    }
+
+    private void Enable() {
+        cheatConsoleUIHolder.gameObject.SetActive(true);
+        cheatConsoleInputField.Select();
     }
 
     private void EnterCheatCode() {
         if (cheatConsoleButton.gameObject.activeSelf) {
             string cheatCode = cheatConsoleInputField.text;
 
-            if (cheatCode == "KILL_ALL") {
+            if (cheatCode == "c") {
                 List<City> cityList = CityController.Instance.GetCities();
                 while (cityList.Count > 0) {
                     Destroy(cityList[0].gameObject);
                 }
             }
 
-            if (cheatCode == "a") {
-                Alien.Create();
+            if (cheatCode == "a1") {
+                Asteroid.Create("Asteroid -1");
+            }
+
+            if (cheatCode == "a2") {
+                Alien.Create("Alien -1");
+            }
+
+            if (cheatCode == "el") {
+                GameManager.Instance.EndLevel();
             }
         }
     }
