@@ -7,6 +7,7 @@ public class EnemySpawnerController : MonoBehaviour {
     private class Spawns {
         private int asteroids;
         private int aliens;
+        private int splinter;
 
         public Spawns() {
             asteroids = 0;
@@ -29,19 +30,26 @@ public class EnemySpawnerController : MonoBehaviour {
             return aliens;
         }
 
+        public void AddSplinter(int a) {
+            splinter += a; 
+        }
+
+        public int GetSplinters() {
+            return splinter;
+        }
+
         public void Zero() {
             asteroids = 0;
             aliens = 0;
+            splinter = 0;
         }
 
         public int GetRemaining() {
-            return asteroids + aliens;
+            return asteroids + aliens + splinter;
         }
     }
 
     public static EnemySpawnerController Instance;
-
-    private Camera mainCamera;
 
     [SerializeField] private float levelLengthTimerMax;
     private float levelLengthTimer;
@@ -62,8 +70,6 @@ public class EnemySpawnerController : MonoBehaviour {
             Instance = this; 
         }
         ValidateSerializeField();
-
-        mainCamera = Camera.main;
     }
 
     private void Update() {
@@ -117,8 +123,6 @@ public class EnemySpawnerController : MonoBehaviour {
         // Number of asteroids to spawn
         int numberOfAsteroids =  (level + 2) * (levelTime / 6);
 
-        Debug.Log(numberOfAsteroids);
-
         for (int i = 0; i < enemySpawnTimes.Length; i++) {
             enemySpawnTimes[i] = new Spawns();
         }
@@ -129,17 +133,21 @@ public class EnemySpawnerController : MonoBehaviour {
             numberOfAsteroids--;
         }
 
-        Debug.Log(numberOfAsteroids);
-
         for (int i = 0; i < numberOfAsteroids; i++) {
             int index = UnityEngine.Random.Range(0, enemySpawnTimes.Length);
             enemySpawnTimes[index].AddAsteroids(1);
         }
 
-        int numberOfAliens = Mathf.FloorToInt(level / 2);
+        int numberOfAliens = Mathf.FloorToInt(level / 3);
         for (int i = 0; i < numberOfAliens; i++) {
             int index = UnityEngine.Random.Range(0, enemySpawnTimes.Length);
             enemySpawnTimes[index].AddAliens(1);
+        }
+
+        int numberOfSplinters = Mathf.FloorToInt(level / 2) * 2;
+        for (int i = 0; i < numberOfSplinters; i++) {
+            int index = UnityEngine.Random.Range(0, enemySpawnTimes.Length);
+            enemySpawnTimes[index].AddSplinter(1);
         }
     }
 
@@ -152,29 +160,32 @@ public class EnemySpawnerController : MonoBehaviour {
             for (int i = 0; i < enemySpawnTimes[index].GetAliens(); i++) {
                 SpawnAlien();
             }
+            for (int i = 0; i < enemySpawnTimes[index].GetSplinters(); i++) {
+                SpawnSpliner();
+            }
             enemySpawnTimes[index].Zero();
         }
     }
 
-    private void SpawnAlien() {
+    public void SpawnAlien() {
         enemyList.Add(Alien.Create("Alien " + enemyList.Count.ToString()));
     }
 
-    private void SpawnAsteroid() {
+    public void SpawnAsteroid() {
         enemyList.Add(Asteroid.Create("Asteroid " + enemyList.Count.ToString()));
     }
 
-    public void RemoveAsteroid(Asteroid asteroid) {
-        if (!enemyList.Remove(asteroid)) {
-            throw new Exception("Error: Attempted to destory an asteroid not in spawnable list");
-        }
-
-        OnEnemyDestory?.Invoke(this, EventArgs.Empty);
+    public void SpawnAsteroid(Vector2 spawnPosition) {
+        enemyList.Add(Asteroid.Create("Asteroid " + enemyList.Count.ToString(), spawnPosition));
     }
 
-    public void RemoveAlien(Alien alien) {
-        if (!enemyList.Remove(alien)) {
-            throw new Exception("Error: Attempted to destory an alien not in spawnable list");
+    public void SpawnSpliner() {
+        enemyList.Add(AsteroidSplinter.Create("AsteroidSplinter " + enemyList.Count.ToString()));
+    }
+
+    public void RemoveEnemy(Enemy enemy) {
+        if (!enemyList.Remove(enemy)) {
+            Debug.LogWarning("Warn: Attempted to destory an enemy [" + enemy.name + "] not in enemy list");
         }
 
         OnEnemyDestory?.Invoke(this, EventArgs.Empty);

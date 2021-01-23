@@ -8,8 +8,27 @@ public class Asteroid : Enemy {
         Vector2 lowerLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
         Vector2 lowerRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0));
 
-        Vector2 spawnPosition = new Vector2(UnityEngine.Random.Range(upperLeft.x, upperRight.x), upperRight.y + .075f);
-        Vector2 direction = (new Vector2(UnityEngine.Random.Range(lowerLeft.x, lowerRight.x), lowerRight.y) - spawnPosition).normalized;
+        Vector2 spawnPosition = new Vector2(Random.Range(upperLeft.x, upperRight.x), upperRight.y + .075f);
+        Vector2 direction = (new Vector2(Random.Range(lowerLeft.x, lowerRight.x), lowerRight.y) - spawnPosition).normalized;
+
+        Transform pfAsteroid = Resources.Load<Transform>("pfAsteroid");
+        Transform asteroidTransform = Instantiate(pfAsteroid, spawnPosition, Quaternion.identity);
+
+        Asteroid asteroid = asteroidTransform.GetComponent<Asteroid>();
+        Vector3 normalizedDirection = direction.normalized;
+
+        asteroid.name = name;
+        asteroid.normalizedDirection = new Vector3(normalizedDirection.x, normalizedDirection.y, 0f);
+        asteroid.spawnPosition = new Vector3(spawnPosition.x, spawnPosition.y, 0f);
+
+        return asteroid;
+    }
+
+    public static Asteroid Create(string name, Vector2 spawnPosition) {
+        Vector2 lowerLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
+        Vector2 lowerRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, 0));
+
+        Vector2 direction = (new Vector2(Random.Range(lowerLeft.x, lowerRight.x), lowerRight.y) - spawnPosition).normalized;
 
         Transform pfAsteroid = Resources.Load<Transform>("pfAsteroid");
         Transform asteroidTransform = Instantiate(pfAsteroid, spawnPosition, Quaternion.identity);
@@ -69,6 +88,6 @@ public class Asteroid : Enemy {
     }
 
     private void OnDestroy() {
-        EnemySpawnerController.Instance.RemoveAsteroid(this);
+        EnemySpawnerController.Instance.RemoveEnemy(this);
     }
 }

@@ -6,39 +6,41 @@ public class Alien : Enemy {
     public static Alien Create(string name) {
         Transform pfAlien = Resources.Load<Transform>("pfAlien");
 
-        // Corner screen coordinates 
-        Vector2 upperLeftScreen = new Vector2(0, Screen.height);
-        Vector2 upperRightScreen = new Vector2(Screen.width, Screen.height);
-
-        // Corner locations in world coordinates
-        Vector2 leftMovePosition = Camera.main.ScreenToWorldPoint(upperLeftScreen) + new Vector3(1f, -1f);
-        Vector2 rightMovePosition = Camera.main.ScreenToWorldPoint(upperRightScreen) + new Vector3(-1f, -1f);
-        Vector3 targetPostion;
-
         Vector3 spawnPosition;
+        Vector3 targetPostion;
         if (Random.Range(0, 100) < 50) {
-            spawnPosition = leftMovePosition + new Vector2(-2f, 0f);
-            targetPostion = rightMovePosition;
+            // left side
+            spawnPosition = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)) + new Vector3(-1f, -1f, 0f);
+            targetPostion = spawnPosition + new Vector3(3f, 0f, 0f);
         } else {
-            spawnPosition = rightMovePosition + new Vector2(2f, 0f);
-            targetPostion = leftMovePosition;
+            // right side
+            spawnPosition = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)) + new Vector3(1f, -1f, 0f);
+            targetPostion = spawnPosition + new Vector3(-3f, 0f, 0f);
         }
         spawnPosition.z = 0;
+        targetPostion.z = 0;
 
         Transform alienTransform = Instantiate(pfAlien, spawnPosition, Quaternion.identity);
         Alien alien = alienTransform.GetComponent<Alien>();
 
-        alien.leftMovePosition = leftMovePosition;
-        alien.rightMovePosition = rightMovePosition;
+        // alien.leftMovePosition = leftMovePosition;
+        // alien.rightMovePosition = rightMovePosition;
         alien.targetPostion = targetPostion;
         alien.normalizedDirection = (targetPostion - spawnPosition).normalized;
+        alien.yTop = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).y - 1;
+        alien.yBottom = alien.yTop - 1.5f;
+        alien.xLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, Screen.height)).x + 1;
+        alien.xRight = Camera.main.ScreenToWorldPoint(new Vector2(Screen.width, Screen.height)).x - 1;
         alien.name = name;
 
         return alien;
     }
 
-    private Vector3 leftMovePosition;
-    private Vector3 rightMovePosition;
+    private float yTop;
+    private float yBottom;
+    private float xLeft;
+    private float xRight;
+
     private Vector3 targetPostion;
     private Vector3 normalizedDirection;
 
@@ -68,12 +70,7 @@ public class Alien : Enemy {
             transform.position += normalizedDirection * Time.deltaTime * speed;
 
             if (Vector3.Distance(transform.position, targetPostion) < 0.1f) {
-                if (Vector3.Distance(leftMovePosition, targetPostion) < 0.1f) {
-                    targetPostion = rightMovePosition;
-                } else {
-                    targetPostion = leftMovePosition;
-                }
-                normalizedDirection = (targetPostion - transform.position).normalized;
+                SelectTarget();
             } 
 
             if (shield.activeSelf) {
@@ -113,6 +110,30 @@ public class Alien : Enemy {
     }
 
     private void OnDestroy() {
-        EnemySpawnerController.Instance.RemoveAlien(this);
+        EnemySpawnerController.Instance.RemoveEnemy(this);
+    }
+
+    private void SelectTarget() {
+        int vChoice = Random.Range(0, 100);
+        if (vChoice < 50) {
+            targetPostion.y = yTop;
+        } else {
+            targetPostion.y = yBottom;
+        }
+
+        int hChoice = Random.Range(0, 100);
+        if (hChoice < 50) {
+            targetPostion.x += 1.5f;
+            if (targetPostion.x > xRight) {
+                targetPostion.x -= 3f;
+            }
+        } else {
+            targetPostion.x -= 1.5f;
+            if (targetPostion.x < xLeft) {
+                targetPostion.x += 3f;
+            }
+        }
+        targetPostion.z = 0;
+        normalizedDirection = (targetPostion - transform.position).normalized;
     }
 }

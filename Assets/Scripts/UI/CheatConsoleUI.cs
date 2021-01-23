@@ -48,11 +48,15 @@ public class CheatConsoleUI : MonoBehaviour {
             }
 
             if (cheatCode == "a1") {
-                Asteroid.Create("Asteroid -1");
+                EnemySpawnerController.Instance.SpawnAsteroid();
             }
 
             if (cheatCode == "a2") {
-                Alien.Create("Alien -1");
+                EnemySpawnerController.Instance.SpawnAlien();
+            }
+
+            if (cheatCode == "a3") {
+                EnemySpawnerController.Instance.SpawnSpliner();
             }
 
             if (cheatCode == "el") {

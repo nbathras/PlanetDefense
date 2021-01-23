@@ -242,9 +242,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firePosition: {fileID: 3968518404918551357}
   shield: {fileID: 2000458114269499180}
-  fireRateTimerMax: 6
+  fireRateTimerMax: 5
   shieldTimerMax: 0.5
-  speed: 3
+  speed: 2
 --- !u!61 &4091044494911367588
 BoxCollider2D:
   m_ObjectHideFlags: 0
